@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css, Global, useTheme } from "@emotion/react";
 // custom type definitions (FOUND IN @type/emotion.d.ts):
 import {
@@ -167,7 +166,8 @@ export const GlobalReset = () => {
             this rule here.
           */
 
-          overflow: hidden scroll !important;
+          /* overflow: hidden scroll !important; */
+          overflow: hidden hidden !important;
           scroll-behavior: smooth;
 
           background-color: ${theme.colors.background.main};
