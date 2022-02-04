@@ -76,7 +76,7 @@ const App = () => {
       </Helmet>
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
-      <PageContainer className="page-container" id="page-container">
+      <PageContainer id="page-container">
         {/* <div style={{ height: "20rem" }}>you</div> */}
         <Map minZoomLevel={-3} maxZoomLevel={12} step={250} />
         {/* <Map minZoomLevel={-20} maxZoomLevel={15} step={250} /> */}
