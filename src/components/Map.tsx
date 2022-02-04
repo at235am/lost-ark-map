@@ -25,6 +25,7 @@ import Cursor from "./Cursor";
 import throttle from "lodash.throttle";
 import useMousePosition from "../hooks/useMousePosition";
 import MapControls from "./MapControls";
+import Searchbar from "./Searchbar";
 
 const Viewbox = styled.div`
   position: relative;
@@ -188,9 +189,13 @@ const Map = ({
   const moveMapRelativeToViewbox = (
     x: number,
     y: number,
-    transition = { duration: 0.2 }
+    transition?: Transition | undefined
   ) => {
-    dragger.start({ x, y, transition });
+    dragger.start({
+      x,
+      y,
+      transition: transition ? transition : { duration: 0.2 },
+    });
     setOffset({ x, y });
   };
 
@@ -201,14 +206,14 @@ const Map = ({
   const moveMapFromMapPositionToViewboxPosition = (
     from: Position,
     to: Position,
-    transition = { duration: 0.2 }
+    transition?: Transition | undefined
   ) => {
     const x = to.x - from.x;
     const y = to.y - from.y;
     moveMapRelativeToViewbox(x, y, transition);
   };
 
-  const panToElement = (id: string, transition = { duration: 0.2 }) => {
+  const panToElement = (id: string, transition?: Transition | undefined) => {
     const element = transformedPois.find((poi) => poi.id === id);
     if (element) {
       // const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -335,6 +340,8 @@ const Map = ({
         zoomOut={decrementZoom}
         centerMap={panToCenter}
       />
+
+      <Searchbar pois={transformedPois} panToElement={panToElement} />
 
       <DraggableMap
         onClick={(e) => {}}
