@@ -6,6 +6,9 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
+// components:
+import DynamicPortal from "./DynamicPortal";
+
 type Position = { x: number; y: number };
 
 const Container = styled(motion.div)`
@@ -14,6 +17,9 @@ const Container = styled(motion.div)`
   left: 0;
 
   background-color: black;
+
+  width: 10px;
+  height: 10px;
 
   cursor: pointer;
 
@@ -34,21 +40,32 @@ type PoiProps = { id: string; data: Poi; test: Poi };
 
 const PointOfInterest = ({ id, data, test }: PoiProps) => {
   const { x, y } = data.position;
+  const [showPOI, setShowPOI] = useState(false);
+
+  const toggleShowPOI = () => setShowPOI(!showPOI);
+
   return (
     <Container
       // position={{ x, y }}
       id={id}
-      animate={{ x: data.position.x, y: data.position.y }}
+      animate={{ x, y }}
       transition={{ type: "tween", duration: 0.2 }}
+      onClick={toggleShowPOI}
     >
       {/* {JSON.stringify(data)} */}
-      <div>{data.id}</div>
-      <div>
-        ({Math.round(data.position.x)}, {Math.round(data.position.y)})
-      </div>
-      <div>
-        ({Math.round(test.position.x)}, {Math.round(test.position.y)})
-      </div>
+      {showPOI && (
+        <DynamicPortal portalId="page-container" backdrop close={toggleShowPOI}>
+          <div>
+            <div>{data.id}</div>
+            <div>
+              ({Math.round(data.position.x)}, {Math.round(data.position.y)})
+            </div>
+            <div>
+              ({Math.round(test.position.x)}, {Math.round(test.position.y)})
+            </div>
+          </div>
+        </DynamicPortal>
+      )}
     </Container>
   );
 };
