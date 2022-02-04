@@ -22,12 +22,26 @@ const Container = styled(motion.div)`
   }
 `;
 
-export type PoiTypes = "island" | "zone" | "harbor" | "landing"; // will be revised
+export type PoiTypes = "island" | "zone" | "harbor" | "landing";
+("gate"); // will be revised
 
 export type Poi = {
   id: string;
   type: PoiTypes;
   position: { x: number; y: number };
+  // islandHearts?: number;
+  // mokokoSeeds?: number;
+  // recommendedGearScore: number;
+  // availability: string;
+  // bifrost?: string;
+  // localEvent?: string;
+  // bossAppearance?: string;
+  // craftingResources?: string;
+  // craftMaterialRank?: string;
+  // pvp?: string;
+  // rewards?: string;
+  // givana: boolean;
+  // territorialStatus?: string;
 };
 
 type PoiProps = { id: string; data: Poi; test: Poi };
