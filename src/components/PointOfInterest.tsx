@@ -6,6 +6,8 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
+type Position = { x: number; y: number };
+
 const Container = styled(motion.div)`
   position: absolute;
   top: 0;
@@ -25,19 +27,16 @@ export type Poi = {
   position: { x: number; y: number };
 };
 
-type PoiProps = { data: Poi; test: Poi; doThis: () => void };
+type PoiProps = { id: string; data: Poi; test: Poi };
 
-const PointOfInterest = ({ data, test, doThis }: PoiProps) => {
+const PointOfInterest = ({ id, data, test }: PoiProps) => {
+  const { x, y } = data.position;
   return (
     <Container
+      // position={{ x, y }}
+      id={id}
       animate={{ x: data.position.x, y: data.position.y }}
-      transition={
-        // { bounce: 1 }
-        { type: "tween", duration: 0.2 }
-      }
-      onClick={(e) => {
-        doThis();
-      }}
+      transition={{ type: "tween", duration: 0.2 }}
     >
       {/* {JSON.stringify(data)} */}
       <div>{data.id}</div>

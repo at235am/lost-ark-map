@@ -77,10 +77,10 @@ const App = () => {
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
       <PageContainer className="page-container" id="page-container">
-        <DndContext>
-          {/* <Map minZoomLevel={-5} maxZoomLevel={15} step={200} /> */}
-          <Map minZoomLevel={-20} maxZoomLevel={15} step={250} />
-        </DndContext>
+        {/* <div style={{ height: "20rem" }}>you</div> */}
+        <Map minZoomLevel={-3} maxZoomLevel={12} step={400} />
+        {/* <Map minZoomLevel={-20} maxZoomLevel={15} step={250} /> */}
+        {/* <Map2></Map2> */}
 
         {/* <Switch>
       
