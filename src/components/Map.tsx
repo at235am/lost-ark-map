@@ -425,7 +425,8 @@ const Map = ({
         {transformedPois.map((data, i) => (
           <PointOfInterest
             key={data.id}
-            id={data.id}
+            // Commented out in branch POI bc already included in data
+            // id={data.id}
             data={data}
             test={pois[i]}
           />
