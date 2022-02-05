@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // assets:
 import LostArkMap from "../assets/lost-ark-map.png";
+import Mokoko from "../assets/mokoko.gif";
 import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
 import { useCallback } from "react";
 import { DragControlOptions } from "framer-motion/types/gestures/drag/VisualElementDragControls";
@@ -97,6 +98,30 @@ const Img = styled(motion.img)`
   /* outline: 1px dashed white; */
   /* width: 100vw; */
   /* height: 100vh; */
+`;
+
+const BackgroundContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HidingImage = styled(motion.img)`
+  width: 100px;
+
+  user-select: none;
+  pointer-events: none;
+  touch-action: none;
+
+  display: block;
+
+  image-rendering: crisp-edges;
 `;
 
 const List = styled.div`
@@ -597,6 +622,9 @@ const Map2 = ({
       />
 
       <Searchbar pois={pois} panToElement={panToElement} />
+      <BackgroundContainer>
+        <HidingImage src={Mokoko} />
+      </BackgroundContainer>
 
       <DraggableMap
         ref={draggableRef}
