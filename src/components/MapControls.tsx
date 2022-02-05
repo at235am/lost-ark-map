@@ -38,9 +38,9 @@ const ZoomButton = styled.button`
 `;
 
 type MapControlsProps = {
-  zoomIn: () => void;
-  zoomOut: () => void;
-  centerMap: () => void;
+  zoomIn?: () => void;
+  zoomOut?: () => void;
+  centerMap?: () => void;
 };
 
 const MapControls = ({ zoomIn, zoomOut, centerMap }: MapControlsProps) => {

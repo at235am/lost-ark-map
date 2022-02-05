@@ -51,7 +51,7 @@ const Marker = styled(motion.div)`
 
 type SearchbarProps = {
   pois: Poi[];
-  panToElement: (id: string, transition: any) => void;
+  panToElement?: (id: string, transition: any) => void;
 };
 
 const Searchbar = ({ pois, panToElement }: SearchbarProps) => {
@@ -147,7 +147,7 @@ const Searchbar = ({ pois, panToElement }: SearchbarProps) => {
             key={poi.id}
             onClick={() => {
               setShowMarker(true);
-              panToElement(poi.id, { duration: 0.5 });
+              if (panToElement) panToElement(poi.id, { duration: 0.5 });
             }}
           >
             {poi.id}

@@ -6,12 +6,13 @@ import styled from "@emotion/styled";
 import { Route, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
-import { DndContext } from "@dnd-kit/core";
 
 // custom components:
 // import NavigationBar from "./components/NavigationBar";
 import Debug from "./components/Debug";
 import Map from "./components/Map";
+import Map2 from "./components/Map2";
+import { generatePois } from "./utils/utils";
 
 // pages:
 
@@ -54,6 +55,8 @@ const PageContainer = styled.main`
 
   display: flex;
   flex-direction: column;
+
+  align-items: center;
 `;
 
 const App = () => {
@@ -77,9 +80,10 @@ const App = () => {
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
       <PageContainer id="page-container">
-        {/* <div style={{ height: "20rem" }}>you</div> */}
-        <Map minZoomLevel={-3} maxZoomLevel={12} step={250} />
-        {/* <Map minZoomLevel={-20} maxZoomLevel={15} step={250} /> */}
+        {/* <div style={{ height: "10rem" }}>you</div> */}
+        {/* <Map minZoomLevel={-3} maxZoomLevel={12} step={250} /> */}
+
+        <Map2 centerLines step={0.1} />
 
         {/* <Switch>
       

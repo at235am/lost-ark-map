@@ -12,8 +12,6 @@ import {
 } from "framer-motion";
 import { nanoid } from "nanoid";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 // assets:
 import LostArkMap from "../assets/lost-ark-map.png";

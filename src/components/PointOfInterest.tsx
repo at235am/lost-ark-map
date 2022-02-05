@@ -30,16 +30,16 @@ export type Poi = {
   position: { x: number; y: number };
 };
 
-type PoiProps = { id: string; data: Poi; test: Poi };
+type PoiProps = { id: string; data: Poi; test: Poi; scale?: number };
 
-const PointOfInterest = ({ id, data, test }: PoiProps) => {
+const PointOfInterest = ({ id, data, test, scale = 1 }: PoiProps) => {
   const { x, y } = data.position;
   return (
     <Container
       // position={{ x, y }}
       id={id}
-      animate={{ x: data.position.x, y: data.position.y }}
-      transition={{ type: "tween", duration: 0.2 }}
+      animate={{ x: data.position.x, y: data.position.y, scale: 1 }}
+      transition={{ type: "tween", duration: 0 }}
     >
       {/* {JSON.stringify(data)} */}
       <div>{data.id}</div>
