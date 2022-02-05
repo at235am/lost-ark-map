@@ -148,6 +148,7 @@ export const GlobalReset = () => {
         }
 
         html {
+          height: 100%;
           /* border: 2px dashed teal; */
 
           /* width: 100%; */
@@ -166,17 +167,20 @@ export const GlobalReset = () => {
             this rule here.
           */
 
-          /* overflow: hidden scroll !important; */
-          overflow: hidden hidden !important;
+          overflow: hidden scroll !important;
           scroll-behavior: smooth;
+
+          /* height: 100%; */
 
           background-color: ${theme.colors.background.main};
 
           /* background: ${`linear-gradient(45deg, ${theme.colors.primary.main}, ${theme.colors.primary.light})`}; */
 
           body {
+            height: 100%;
             /* border: 2px dashed salmon; */
 
+            /* min-height: 100vh; */
             /* overflow: auto; */
 
             /* overflow: hidden; */
@@ -184,6 +188,7 @@ export const GlobalReset = () => {
             /* height: 100%; */
 
             #root {
+              height: 100%;
               /* border: 2px dashed orange; */
 
               /* overflow: hidden; */

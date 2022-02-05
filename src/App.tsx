@@ -17,11 +17,13 @@ import { generatePois } from "./utils/utils";
 // pages:
 
 const AppContainer = styled.div`
-  /* border: 2px dashed lightblue; */
+  /* border: 2px dashed red; */
 
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
+
+  /* min-height: 100vh; */
 
   display: flex;
   flex-direction: column;
@@ -42,7 +44,7 @@ const NotificationContainer = styled.div`
 `;
 
 const PageContainer = styled.main`
-  /* border: 2px dashed pink; */
+  /* border: 2px dashed blue; */
 
   z-index: 1;
   position: relative;
@@ -51,12 +53,22 @@ const PageContainer = styled.main`
   /* padding-bottom: 2rem; */
   /* padding-top: 2rem; */
 
-  flex: 1;
+  height: 100%;
+
+  /* flex: 1; */
+
+  /* height: 100%; */
 
   display: flex;
   flex-direction: column;
+  align-items: stretch;
 
-  align-items: center;
+  /* align-items: center; */
+`;
+
+const A = styled.div`
+  border: 2px solid yellow;
+  min-height: 200px;
 `;
 
 const App = () => {
@@ -80,7 +92,11 @@ const App = () => {
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
       <PageContainer id="page-container">
-        {/* <div style={{ height: "10rem" }}>you</div> */}
+        {/* <A></A>
+        <A></A>
+        <A></A>
+        <A></A>
+        <A></A> */}
         {/* <Map minZoomLevel={-3} maxZoomLevel={12} step={250} /> */}
 
         <Map2 centerLines step={0.1} />

@@ -7,6 +7,7 @@ import { useGesture } from "@use-gesture/react";
 import {
   animate,
   motion,
+  transform,
   Transition,
   useAnimation,
   useDragControls,
@@ -28,36 +29,24 @@ import MapControls from "./MapControls";
 import Searchbar from "./Searchbar";
 import { generatePois } from "../utils/utils";
 import DynamicPortal from "./DynamicPortal";
-import { V } from "@use-gesture/core/dist/declarations/src/utils/maths";
-import { posix } from "path/posix";
+
 import { useUIState } from "../contexts/UIContext";
 
 const Viewbox = styled.div`
   position: relative;
 
   border: 1px dashed white;
-  height: 100%;
-  width: 100%;
-
-  /* height: 630px; */
-  /* width: 869px; */
-
-  max-height: 100vh;
-  max-width: 100vw;
-
-  /* width: 100%; */
 
   overflow: hidden;
 `;
 
 const DraggableMap = styled(motion.div)`
-  position: relative;
+  outline: 1px dashed green;
 
+  position: relative;
   touch-action: none;
 
   /* cursor: grab; */
-
-  outline: 1px dashed green;
 
   /* outline: 1px dashed green; */
   width: fit-content;
@@ -96,6 +85,7 @@ const DraggableMap2 = styled(motion.div)`
 
 const Img = styled(motion.img)`
   /* z-index: -10; */
+
   position: relative;
   user-select: none;
   pointer-events: none;
@@ -103,7 +93,7 @@ const Img = styled(motion.img)`
 
   display: block;
 
-  /* image-rendering: crisp-edges; */
+  image-rendering: crisp-edges;
   /* outline: 1px dashed white; */
   /* width: 100vw; */
   /* height: 100vh; */
@@ -141,7 +131,7 @@ const A = styled.div`
   left: calc(100% / 2);
   /* left: 500px; */
   width: 1px;
-  height: 100vw;
+  height: 100%;
   background-color: red;
 `;
 
@@ -151,7 +141,7 @@ const B = styled.div`
 
   top: calc(100% / 2);
   /* top: 400px; */
-  width: 100vw;
+  width: 100%;
   height: 1px;
   background-color: red;
 `;
@@ -214,6 +204,12 @@ const Map2 = ({
   };
 
   const pinching = useRef(false);
+
+  const baseTransition: Transition = {
+    type: "tween",
+    duration: 1,
+    ease: "anticipate",
+  };
 
   // const aw = draggableRef.current?.clientWidth || 32;
   // const ah = draggableRef.current?.clientHeight || 32;
@@ -299,23 +295,24 @@ const Map2 = ({
           // setDebug((v: any) => ({ ...v, onDrag: debugString }));
         }
       },
-      onWheel: ({ direction: [_, dy] }) => {
-        console.log("f");
-        const wheelDelta = 100;
+      onWheel: ({ direction: [_, dy], active }) => {
+        if (active) {
+          // const wheelDelta = 100;
 
-        // const stepCount = dy / 100;
-        // console.log(state);
+          // const stepCount = dy / 100;
+          // console.log(state);
 
-        // setCrop((v) => ({ ...v, scale: 1 - (dy * step) / wheelDelta }));
-        // setCrop({
-        //   x: x.get(),
-        //   y: y.get(),
-        //   scale: 1 - (dy * step) / wheelDelta,
-        // });
-        animate(scale, scale.get() + step * -dy);
+          // setCrop((v) => ({ ...v, scale: 1 - (dy * step) / wheelDelta }));
+          // setCrop({
+          //   x: x.get(),
+          //   y: y.get(),
+          //   scale: 1 - (dy * step) / wheelDelta,
+          // });
+          animate(scale, scale.get() + step * -dy);
 
-        // const debugString = `${dy}, ${(dy * step) / wheelDelta}`;
-        // setDebug((v: any) => ({ ...v, onWheel: debugString }));
+          // const debugString = `${dy}, ${(dy * step) / wheelDelta}`;
+          // setDebug((v: any) => ({ ...v, onWheel: debugString }));
+        }
       },
       onPinch: ({
         memo,
@@ -467,8 +464,17 @@ const Map2 = ({
         // setCrop((v) => ({ ...v, ...final }));
         // setCrop({ scale: scale.get(), ...final });
 
-        animate(x, final.x);
-        animate(y, final.y);
+        const transition: Transition = {
+          type: "tween",
+          duration: 1,
+          ease: "anticipate",
+        };
+
+        // if (x.isAnimating()) x.stop();
+        // if (y.isAnimating()) y.stop();
+
+        animate(x, final.x, transition);
+        animate(y, final.y, transition);
 
         console.log(`${image.width} ${image.height}`);
         // console.log(`${aw} ${ah}`);
@@ -482,7 +488,7 @@ const Map2 = ({
     }
   };
 
-  const panToCenter = () => {
+  const panToCenter = (transition = baseTransition) => {
     console.log("-----------\ncenter");
     if (viewboxRef.current && draggableRef.current) {
       const viewbox = viewboxRef.current.getBoundingClientRect();
@@ -506,8 +512,8 @@ const Map2 = ({
       // setCrop((v) => ({ ...v, ...final }));
       // setCrop({ scale: scale.get(), ...final });
 
-      animate(x, final.x);
-      animate(y, final.y);
+      animate(x, final.x, transition);
+      animate(y, final.y, transition);
 
       console.log(`${image.width} ${image.height}`);
       // console.log({ s: crop.scale });
@@ -521,7 +527,7 @@ const Map2 = ({
     // setCrop((v) => ({ ...v, scale: v.scale + step }));
     // setCrop({ x: x.get(), y: y.get(), scale: scale.get() + step });
     {
-      animate(scale, scale.get() + step);
+      animate(scale, scale.get() + step, { duration: 0.2 });
     };
 
   const zoomIn = () => {
@@ -532,6 +538,16 @@ const Map2 = ({
     zoom(-step);
 
     // adjustImage();
+  };
+
+  const resetZoom = (transition = baseTransition) => {
+    animate(scale, 1, transition);
+  };
+
+  const resetMap = () => {
+    const transition = { ...baseTransition, duration: 0.6 };
+    resetZoom(transition);
+    panToCenter(transition);
   };
 
   useEffect(() => {
@@ -572,7 +588,13 @@ const Map2 = ({
         </Cursor>
       )}
 
-      <MapControls zoomIn={zoomIn} zoomOut={zoomOut} centerMap={panToCenter} />
+      <MapControls
+        zoomIn={zoomIn}
+        zoomOut={zoomOut}
+        // centerMap={panToCenter}
+        // centerMap={resetZoom}
+        centerMap={resetMap}
+      />
 
       <Searchbar pois={pois} panToElement={panToElement} />
 
