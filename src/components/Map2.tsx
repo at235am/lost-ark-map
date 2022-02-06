@@ -1,7 +1,6 @@
 // styling:
 import { css, jsx, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useGesture } from "@use-gesture/react";
 
 // libraries:
 import {
@@ -9,33 +8,30 @@ import {
   AnimatePresence,
   AnimationOptions,
   motion,
-  transform,
   Transition,
-  useAnimation,
-  useDragControls,
   useMotionValue,
 } from "framer-motion";
-import { nanoid } from "nanoid";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useGesture } from "@use-gesture/react";
+
+// custom components / types:
+import PointOfInterest, { Poi } from "./PointOfInterest";
+import Debug from "./Debug";
+import Cursor from "./Cursor";
+import MapControls from "./MapControls";
+import MapSidebar from "./MapSidebar";
+import Searchbar from "./Searchbar";
+import CenterGuidelines from "./CenterGuidelines";
+
+// utils:
+import { generatePois } from "../utils/utils";
+
+// hooks:
+import { useUIState } from "../contexts/UIContext";
 
 // assets:
 import LostArkMap from "../assets/lost-ark-map.png";
 import Mokoko from "../assets/mokoko.gif";
-import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
-import { useCallback } from "react";
-import { DragControlOptions } from "framer-motion/types/gestures/drag/VisualElementDragControls";
-import Debug from "./Debug";
-import Cursor from "./Cursor";
-import throttle from "lodash.throttle";
-import useMousePosition from "../hooks/useMousePosition";
-import MapControls from "./MapControls";
-import MapSidebar from "./MapSidebar";
-import { generatePois } from "../utils/utils";
-import DynamicPortal from "./DynamicPortal";
-
-import { useUIState } from "../contexts/UIContext";
-import Searchbar from "./Searchbar";
-import CenterGuidelines from "./CenterGuidelines";
 
 const Container = styled.div`
   /* border: 1px dashed blue; */

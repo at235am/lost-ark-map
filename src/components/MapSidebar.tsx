@@ -7,10 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useUIState } from "../contexts/UIContext";
-import DynamicPortal from "./DynamicPortal";
+
 import { Controls } from "./Map2";
-import { Poi } from "./PointOfInterest";
-import Searchbar from "./Searchbar";
 
 const Container = styled(motion.div)`
   /* MapSidebar needs to be higher than the Viewbox of the Map componeent so that we can cast shadows */

@@ -6,7 +6,6 @@ import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
-import DynamicPortal from "./DynamicPortal";
 import { Controls } from "./Map2";
 import { Poi } from "./PointOfInterest";
 
