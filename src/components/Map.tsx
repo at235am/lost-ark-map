@@ -339,7 +339,7 @@ const Map = ({
         centerMap={panToCenter}
       />
 
-      <Searchbar pois={transformedPois} panToElement={panToElement} />
+      {/* <Searchbar pois={transformedPois} panToElement={panToElement} /> */}
 
       <DraggableMap
         onClick={(e) => {}}

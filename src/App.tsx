@@ -91,6 +91,7 @@ const App = () => {
       </Helmet>
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
+
       <PageContainer id="page-container">
         {/* <A></A>
         <A></A>
@@ -99,7 +100,7 @@ const App = () => {
         <A></A> */}
         {/* <Map minZoomLevel={-3} maxZoomLevel={12} step={250} /> */}
 
-        <Map2 centerLines step={0.1} />
+        <Map2 showCenterGridlines step={0.1} />
 
         {/* <Switch>
       

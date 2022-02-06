@@ -6,21 +6,28 @@ import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { useEffect, useRef, useState } from "react";
+import DynamicPortal from "./DynamicPortal";
+import { Controls } from "./Map2";
 import { Poi } from "./PointOfInterest";
 
 const Container = styled.div`
-  z-index: 200;
+  position: fixed;
 
-  position: absolute;
   top: 0;
   left: 0;
+
+  border: 1px solid red;
+
+  z-index: 100;
+
+  /* position: absolute; */
+  /* top: 0; */
+  /* left: 0; */
 
   margin: 1rem;
 `;
 
-const Input = styled.input`
-  color: black;
-`;
+const Results = styled.div``;
 
 const Item = styled.div`
   cursor: pointer;
@@ -30,36 +37,32 @@ const Item = styled.div`
   }
 `;
 
-const Marker = styled(motion.div)`
-  /* cursor: pointer; */
-  z-index: 1000;
+const Input = styled.input`
+  color: black;
 
-  position: absolute;
-
-  width: 3rem;
-  height: 3rem;
-
-  border: 5px solid yellow;
-  border-radius: 50%;
-
-  background-color: transparent;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-  }
+  width: 100%;
 `;
 
 type SearchbarProps = {
   pois: Poi[];
-  panToElement?: (id: string, transition: any) => void;
+  controls: Controls;
 };
 
-const Searchbar = ({ pois, panToElement }: SearchbarProps) => {
-  const [searchResults, setSearchResults] = useState<Poi[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showMarker, setShowMarker] = useState(true);
+const Searchbar = ({ pois, controls }: SearchbarProps) => {
+  const {
+    toggleSidebar,
+    openSidebar,
+    closeSidebar,
+    panToCenter,
+    panToElement,
+    zoom,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+  } = controls;
 
-  const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Poi[]>([]);
 
   const fuse = new Fuse(pois, {
     keys: ["id"],
@@ -67,38 +70,6 @@ const Searchbar = ({ pois, panToElement }: SearchbarProps) => {
     shouldSort: true,
     threshold: 0.3,
   });
-
-  const animProps = {
-    // variants: pageVariants,
-    variants: {
-      enter: {
-        x: -100,
-        y: center.y,
-        opacity: 1,
-      },
-      center: {
-        x: center.x,
-        y: center.y,
-
-        opacity: 1,
-      },
-      exit: {
-        // zIndex: 0,
-        x: 2000,
-        y: center.y,
-        opacity: 0,
-      },
-    },
-    initial: "enter",
-    animate: "center",
-    exit: "exit",
-    transition: {
-      // x: { type: "spring", stiffness: 300, damping: 30 },
-      // opacity: { duration: 0.2 },
-      duration: 0.5,
-      // delay: 0.5,
-    },
-  };
 
   useEffect(() => {
     if (searchTerm === "") setSearchResults([]);
@@ -110,51 +81,38 @@ const Searchbar = ({ pois, panToElement }: SearchbarProps) => {
     }
   }, [searchTerm, pois]);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    const fn = () => {
-      setShowMarker(false);
-    };
-    if (showMarker) {
-      timer = setTimeout(fn, 5000);
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [showMarker]);
-
   return (
-    <>
-      <AnimatePresence>
-        {showMarker && (
-          <Marker
-            // animate={{ x: center.x, y: center.y }}
+    <Container>
+      <Input
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        // onFocus={() => setIsFocused(true)}
+        // onBlur={() => setIsFocused(false)}
+      />
 
-            {...animProps}
-          />
+      <button onClick={toggleSidebar}>test</button>
+
+      <Results>
+        {searchResults.length !== 0 && (
+          <>
+            dsf
+            {searchResults.map((poi) => (
+              <Item
+                key={poi.id}
+                onClick={() => {
+                  openSidebar();
+
+                  // wait a bit here
+                  panToElement(poi.id, { duration: 0.5 });
+                }}
+              >
+                {poi.id}
+              </Item>
+            ))}
+          </>
         )}
-      </AnimatePresence>
-
-      <Container>
-        <Input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        {searchResults.map((poi) => (
-          <Item
-            key={poi.id}
-            onClick={() => {
-              setShowMarker(true);
-              if (panToElement) panToElement(poi.id, { duration: 0.5 });
-            }}
-          >
-            {poi.id}
-          </Item>
-        ))}
-      </Container>
-    </>
+      </Results>
+    </Container>
   );
 };
 

@@ -6,6 +6,8 @@ import { useGesture } from "@use-gesture/react";
 // libraries:
 import {
   animate,
+  AnimatePresence,
+  AnimationOptions,
   motion,
   transform,
   Transition,
@@ -27,56 +29,45 @@ import Cursor from "./Cursor";
 import throttle from "lodash.throttle";
 import useMousePosition from "../hooks/useMousePosition";
 import MapControls from "./MapControls";
-import Searchbar from "./Searchbar";
+import MapSidebar from "./MapSidebar";
 import { generatePois } from "../utils/utils";
 import DynamicPortal from "./DynamicPortal";
 
 import { useUIState } from "../contexts/UIContext";
+import Searchbar from "./Searchbar";
+import CenterGuidelines from "./CenterGuidelines";
+
+const Container = styled.div`
+  /* border: 1px dashed blue; */
+
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
+    flex-direction: column-reverse;
+  }
+`;
 
 const Viewbox = styled.div`
+  /* border: 1px dashed white; */
+
   position: relative;
-
-  border: 1px dashed white;
-
   overflow: hidden;
 `;
 
 const DraggableMap = styled(motion.div)`
-  outline: 1px dashed green;
+  /* border: 1px dashed green; */
 
   position: relative;
   touch-action: none;
 
-  /* cursor: grab; */
+  cursor: grab;
 
-  /* outline: 1px dashed green; */
   width: fit-content;
   height: fit-content;
-  /* width: 100vw; */
-  /* height: 100vh; */
-
-  &:active {
-    cursor: move;
-    cursor: grabbing;
-  }
-`;
-
-const DraggableMap2 = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  touch-action: none;
-
-  /* cursor: grab; */
-
-  outline: 1px dashed green;
-
-  /* outline: 1px dashed green; */
-  /* width: fit-content; */
-  /* height: fit-content; */
-  /* width: 100vw; */
-  /* height: 100vh; */
 
   &:active {
     cursor: move;
@@ -85,8 +76,6 @@ const DraggableMap2 = styled(motion.div)`
 `;
 
 const Img = styled(motion.img)`
-  /* z-index: -10; */
-
   position: relative;
   user-select: none;
   pointer-events: none;
@@ -95,9 +84,6 @@ const Img = styled(motion.img)`
   display: block;
 
   image-rendering: crisp-edges;
-  /* outline: 1px dashed white; */
-  /* width: 100vw; */
-  /* height: 100vh; */
 `;
 
 const BackgroundContainer = styled.div`
@@ -124,14 +110,17 @@ const HidingImage = styled(motion.img)`
   image-rendering: crisp-edges;
 `;
 
-const List = styled.div`
-  max-height: 20rem;
-  overflow: auto;
-`;
-
-const Wrapper = styled.div`
-  border: 3px solid blue;
-`;
+export type Controls = {
+  toggleSidebar: () => void;
+  openSidebar: () => void;
+  closeSidebar: () => void;
+  panToCenter: (transition?: AnimationOptions<number>) => void;
+  panToElement: (id: string, transition?: AnimationOptions<number>) => void;
+  zoom: (step: number) => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetZoom: () => void;
+};
 
 export type Position = {
   x: number;
@@ -141,7 +130,7 @@ export type Position = {
 type MapProps = {
   // mapImage: string;
   // pois: Poi[];
-  centerLines?: boolean;
+  showCenterGridlines?: boolean;
 
   minZoomLevel?: number;
   maxZoomLevel?: number;
@@ -150,77 +139,38 @@ type MapProps = {
   debounceZoomDelay?: number; // in milli-seconds (ms)
 };
 
-const A = styled.div`
-  z-index: 9999;
-  position: absolute;
-  left: calc(100% / 2);
-  /* left: 500px; */
-  width: 1px;
-  height: 100%;
-  background-color: red;
-`;
-
-const B = styled.div`
-  position: absolute;
-  z-index: 9999;
-
-  top: calc(100% / 2);
-  /* top: 400px; */
-  width: 100%;
-  height: 1px;
-  background-color: red;
-`;
-
-const RectA = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 15px;
-  height: 10px;
-  background-color: red;
-`;
-const RectB = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  /* width: 200px;
-  height: 300px; */
-
-  width: 15px;
-  height: 10px;
-
-  transform: scale(3);
-  opacity: 0.5;
-  background-color: blue;
-`;
+const baseTransition: Transition = {
+  type: "tween",
+  duration: 1,
+  ease: "anticipate",
+};
 
 const Map2 = ({
   // mapImage = "",
   // pois = [],
-  centerLines = false,
+  showCenterGridlines = false,
+  step = 0.05,
 
   defaultZoomLevel = 0,
   minZoomLevel = -20,
   maxZoomLevel = 20,
-  step = 0.05,
   debounceZoomDelay = 80,
 }: MapProps) => {
   const { isMobile } = useUIState();
+  const [debug, setDebug] = useState<any>(null);
+  const [poiSelectedId, setPoiSelectedId] = useState<string | null>(null);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const viewboxRef = useRef<HTMLDivElement>(null);
   const draggableRef = useRef<HTMLDivElement>(null);
-  const [pois, setPois] = useState<Poi[]>([]);
-  const [mapImageUrl, setMapImageUrl] = useState("");
-
-  const [debug, setDebug] = useState<any>(null);
-
   // const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 });
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const scale = useMotionValue(1);
+
+  const [pois, setPois] = useState<Poi[]>([]);
+  const [mapImageUrl, setMapImageUrl] = useState("");
 
   const setCrop = (crop: { x: number; y: number; scale: number }) => {
     x.set(crop.x);
@@ -228,19 +178,12 @@ const Map2 = ({
     scale.set(crop.scale);
   };
 
-  const pinching = useRef(false);
+  const poiSelected = useMemo(
+    () => pois.find((poi) => poi.id === poiSelectedId),
+    [poiSelectedId]
+  );
 
-  const baseTransition: Transition = {
-    type: "tween",
-    duration: 1,
-    ease: "anticipate",
-  };
-
-  // const aw = draggableRef.current?.clientWidth || 32;
-  // const ah = draggableRef.current?.clientHeight || 32;
-
-  // const m1 = (aw * (crop.scale - 1)) / 2;
-  // const m2 = (ah * (crop.scale - 1)) / 2;
+  console.log({ poiSelectedId, poiSelected });
 
   const adjustImage = () => {
     if (draggableRef.current && viewboxRef.current) {
@@ -439,18 +382,6 @@ const Map2 = ({
     };
   };
 
-  // const tryScale = (num: number) => (num * (crop.scale + 1)) / 2;
-
-  const scale2 = () => {
-    if (draggableRef.current) {
-      const crop = { scale: scale.get() };
-
-      const aw = draggableRef.current.clientWidth;
-      const ah = draggableRef.current.clientHeight;
-      return (aw * (crop.scale + 1)) / 2;
-    }
-  };
-
   const adjustForViewboxOffset = (pos: Position) => {
     if (viewboxRef.current && draggableRef.current) {
       const viewbox = viewboxRef.current.getBoundingClientRect();
@@ -462,12 +393,13 @@ const Map2 = ({
     } else return pos;
   };
 
-  const panToElement = (id: string, transition?: Transition | undefined) => {
+  const panToElement = (id: string, transition?: AnimationOptions<number>) => {
     console.log(id);
+    transition = transition ?? baseTransition;
 
     const element = pois.find((poi) => poi.id === id);
     if (element) {
-      console.log("-----------\npantoelement");
+      // console.log("-----------\npantoelement");
       if (viewboxRef.current && draggableRef.current) {
         const viewbox = viewboxRef.current.getBoundingClientRect();
         const image = draggableRef.current.getBoundingClientRect();
@@ -489,32 +421,25 @@ const Map2 = ({
         // setCrop((v) => ({ ...v, ...final }));
         // setCrop({ scale: scale.get(), ...final });
 
-        const transition: Transition = {
-          type: "tween",
-          duration: 1,
-          ease: "anticipate",
-        };
-
         // if (x.isAnimating()) x.stop();
         // if (y.isAnimating()) y.stop();
 
         animate(x, final.x, transition);
         animate(y, final.y, transition);
 
-        console.log(`${image.width} ${image.height}`);
-        // console.log(`${aw} ${ah}`);
-        // console.log({ s: crop.scale });
-        console.log({ imgCenter: positionOfElement });
-        console.log({ viewboxCenter });
-        console.log({ diff });
-        console.log({ final });
-        console.log({ scale });
+        // console.log(`${image.width} ${image.height}`);
+        // console.log({ imgCenter: positionOfElement });
+        // console.log({ viewboxCenter });
+        // console.log({ diff });
+        // console.log({ final });
+        // console.log({ scale });
       }
     }
   };
 
-  const panToCenter = (transition = baseTransition) => {
-    console.log("-----------\ncenter");
+  const panToCenter = (transition?: AnimationOptions<number>) => {
+    transition = transition ?? baseTransition;
+
     if (viewboxRef.current && draggableRef.current) {
       const viewbox = viewboxRef.current.getBoundingClientRect();
       const image = draggableRef.current.getBoundingClientRect();
@@ -540,31 +465,21 @@ const Map2 = ({
       animate(x, final.x, transition);
       animate(y, final.y, transition);
 
-      console.log(`${image.width} ${image.height}`);
-      // console.log({ s: crop.scale });
-      console.log({ imgCenter });
-      console.log({ viewportCenter: viewboxCenter });
-      console.log({ diff });
+      // console.log(`${image.width} ${image.height}`);
+      // console.log({ imgCenter });
+      // console.log({ viewportCenter: viewboxCenter });
+      // console.log({ diff });
     }
   };
 
-  const zoom = (step: number) =>
+  const zoom = (step: number) => {
     // setCrop((v) => ({ ...v, scale: v.scale + step }));
     // setCrop({ x: x.get(), y: y.get(), scale: scale.get() + step });
-    {
-      animate(scale, scale.get() + step, { duration: 0.2 });
-    };
-
-  const zoomIn = () => {
-    zoom(step);
-    // adjustImage();
-  };
-  const zoomOut = () => {
-    zoom(-step);
-
-    // adjustImage();
+    animate(scale, scale.get() + step, { duration: 0.2 });
   };
 
+  const zoomIn = () => zoom(step);
+  const zoomOut = () => zoom(-step);
   const resetZoom = (transition = baseTransition) => {
     animate(scale, 1, transition);
   };
@@ -573,6 +488,22 @@ const Map2 = ({
     const transition = { ...baseTransition, duration: 0.6 };
     resetZoom(transition);
     panToCenter(transition);
+  };
+
+  const toggleSidebar = () => setShowSidebar((v) => !v);
+  const openSidebar = () => setShowSidebar(true);
+  const closeSidebar = () => setShowSidebar(false);
+
+  const controls: Controls = {
+    toggleSidebar,
+    openSidebar,
+    closeSidebar,
+    panToCenter,
+    panToElement,
+    zoom,
+    zoomIn,
+    zoomOut,
+    resetZoom,
   };
 
   useEffect(() => {
@@ -588,77 +519,63 @@ const Map2 = ({
     fetchMapImage();
   }, []);
 
+  useEffect(() => {
+    panToCenter();
+  }, [mapImageUrl]);
+
   return (
-    <Viewbox className="viewbow" ref={viewboxRef}>
-      {/* <Debug drag data={{ crop, debug }}></Debug> */}
-      {/* <Debug drag data={{ debug }}></Debug> */}
+    <Container>
+      {/* <Debug drag data={{ showSidebar }} /> */}
+      <Searchbar pois={pois} controls={controls} />
+      <AnimatePresence>
+        {showSidebar && <MapSidebar controls={controls} />}
+      </AnimatePresence>
+      <Viewbox className="viewbow" ref={viewboxRef}>
+        {showCenterGridlines && <CenterGuidelines />}
 
-      {/* <DynamicPortal portalId="page-container"> */}
-      {centerLines && (
-        <>
-          <B></B>
-          <A></A>
-        </>
-      )}
+        {!isMobile && (
+          <Cursor showPosition>
+            <div>{}</div>
+          </Cursor>
+        )}
 
-      {/* <DynamicPortal portalId="page-container">
-        <RectA></RectA>
-        <RectB></RectB>
-      </DynamicPortal> */}
+        <MapControls
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+          centerMap={() => {
+            resetMap();
+            setPoiSelectedId(null);
+          }}
+        />
 
-      {/* <Debug drag data={debugData} /> */}
-      {!isMobile && (
-        <Cursor showPosition>
-          <div>{}</div>
-        </Cursor>
-      )}
+        <BackgroundContainer>
+          <HidingImage src={Mokoko} />
+        </BackgroundContainer>
 
-      <MapControls
-        zoomIn={zoomIn}
-        zoomOut={zoomOut}
-        // centerMap={panToCenter}
-        // centerMap={resetZoom}
-        centerMap={resetMap}
-      />
+        <DraggableMap
+          ref={draggableRef}
+          style={{
+            x,
+            y,
+            scale,
+          }}
+        >
+          <Img src={LostArkMap} />
 
-      <Searchbar pois={pois} panToElement={panToElement} />
-      <BackgroundContainer>
-        <HidingImage src={Mokoko} />
-      </BackgroundContainer>
-
-      <DraggableMap
-        ref={draggableRef}
-        // animate={{
-        style={{
-          x,
-          y,
-          scale,
-
-          // x: crop.x,
-          // y: crop.y,
-          // scale: crop.scale,
-
-          // transformOrigin: "top left",
-        }}
-        // style={{
-        //   left: crop.x,
-        //   top: crop.y,
-        //   transform: `scale(${crop.scale})`,
-        // }}
-        // transition={{ duration: 0 }}
-      >
-        <Img src={LostArkMap} />
-
-        {pois.map((data, i) => (
-          <PointOfInterest
-            key={data.id}
-            id={data.id}
-            data={data}
-            test={pois[i]}
-          />
-        ))}
-      </DraggableMap>
-    </Viewbox>
+          {pois.map((data, i) => (
+            <PointOfInterest
+              key={data.id}
+              id={data.id}
+              data={data}
+              test={pois[i]}
+              onClick={() => {
+                setPoiSelectedId(data.id);
+              }}
+            />
+          ))}
+        </DraggableMap>
+      </Viewbox>
+    </Container>
   );
 };
 
