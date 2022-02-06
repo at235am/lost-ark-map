@@ -130,6 +130,8 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
     initial: "initial",
     animate: "enter",
     exit: "exit",
+
+    transition: { type: "tween", duration: 0.5 },
   };
 
   const mobileSidebarAnimProps = {
@@ -159,6 +161,8 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
     initial: "initial",
     animate: "enter",
     exit: "exit",
+
+    transition: { type: "tween", duration: 0.5 },
   };
 
   const sidebarAnimProps = isMobile

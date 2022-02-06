@@ -36,6 +36,8 @@ import Mokoko from "../assets/mokoko.gif";
 const Container = styled.div`
   /* border: 1px dashed blue; */
 
+  background-color: ${({ theme }) => theme.colors.surface.main};
+
   position: relative;
   overflow: hidden;
 
@@ -499,7 +501,9 @@ const Map2 = ({
     panToCenter(transition);
   };
 
-  const toggleSidebar = () => setShowSidebar((v) => !v);
+  const toggleSidebar = () => {
+    setShowSidebar((v) => !v);
+  };
   const openSidebar = () => setShowSidebar(true);
   const closeSidebar = () => setShowSidebar(false);
 
@@ -587,7 +591,6 @@ const Map2 = ({
               data={data}
               test={pois[i]}
               onClick={() => {
-                console.log({ isDragging });
                 if (!isDragging) {
                   setPoiSelectedId(data.id);
                   openSidebar();

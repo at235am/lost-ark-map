@@ -19,7 +19,7 @@ const Container = styled(motion.div)`
   bottom: 0;
   right: 0;
 
-  width: 4rem;
+  width: 3rem;
 
   padding: 0.75rem 1rem;
 
@@ -55,22 +55,22 @@ const ZoomButton = styled(motion.button)`
 
   border-radius: 50%;
 
-  min-width: 3rem;
-  min-height: 3rem;
+  min-width: 2rem;
+  min-height: 2rem;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
 
     fill: ${({ theme }) => theme.colors.onSurface.main};
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.surface.dark};
+    background-color: ${({ theme }) => theme.colors.surface.darker};
   }
 `;
 

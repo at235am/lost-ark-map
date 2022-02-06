@@ -22,6 +22,7 @@ import {
   MdMenu,
   MdBackHand,
 } from "react-icons/md";
+import ItemPreview from "./ItemPreview";
 
 const Container = styled.div`
   /* border: 1px solid red; */
@@ -48,6 +49,7 @@ const Container = styled.div`
 const SearchbarContainer = styled(motion.div)`
   /* border: 1px solid orange; */
 
+  z-index: 1;
   position: relative;
   background-color: ${({ theme }) => theme.colors.surface.main};
 
@@ -99,35 +101,48 @@ const Button = styled(motion.button)`
   }
 `;
 
-const Results = styled.div`
+const Results = styled(motion.ul)`
+  z-index: 2;
+
   /* border: 1px solid blue; */
 
-  overflow: auto;
+  background-color: ${({ theme }) => theme.colors.surface.main};
+  border-radius: 1rem;
 
-  height: calc(100vh / 3);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 21px 28px 0px;
+
+  height: fit-content;
   max-height: calc(100vh / 3);
+  padding: 0.75rem 0;
 
-  /* @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
-    height: calc(vh/3);
-    max-height: calc(vh/3);
-  } */
-`;
+  /* border-top: 0.5rem solid ${({ theme }) => theme.colors.surface.main}; */
+  /* border-bottom: 0.5rem solid ${({ theme }) => theme.colors.surface.main}; */
 
-const Item = styled.div`
-  cursor: pointer;
+  overflow: auto;
+  /* HIDE SCROLL BARS BUT STILL SCROLLABLE */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
+  li:nth-of-type(2n + 1) {
+    /* background-color: ${({ theme }) => theme.colors.surface.dark}; */
   }
 `;
 
-const Placeholder = styled.div`
+const NoResult = styled.li`
+  padding: 1rem 2rem;
+`;
+
+const Placeholder = styled(motion.div)`
   display: flex;
-  align-items: center;
   gap: 0.5rem;
 `;
 
-const Key = styled.span`
+const Key = styled(motion.span)`
   padding: 0.5rem;
   border-radius: 5px;
   /* background-color: ${({ theme }) => theme.colors.surface.darker}; */
@@ -169,6 +184,11 @@ const Searchbar = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const theme = useTheme();
+
+  const [shiftHeld, setShiftHeld] = useState(false);
+  const [fPressed, setFPressed] = useState(false);
+
   const [searchResults, setSearchResults] = useState<Poi[]>([]);
 
   const fuse = new Fuse(pois, {
@@ -178,23 +198,70 @@ const Searchbar = ({
     threshold: 0.3,
   });
 
+  const getStyle = (keyHeldState: boolean) => ({
+    borderColor: keyHeldState ? theme.colors.primary.main : "currentColor",
+  });
+
+  const resultAnimProps = {
+    variants: {
+      initial: {
+        opacity: 0,
+        y: -500,
+        zIndex: 0,
+      },
+      enter: {
+        opacity: 1,
+        y: 0,
+        transitionEnd: {
+          // after the transition ends put the zIndex back to 2
+          // so that the drop shadow of the searchbar is not on top of the current
+          zIndex: 2,
+        },
+      },
+      exit: {
+        opacity: 0,
+        y: -500,
+        zIndex: 0,
+      },
+    },
+    initial: "initial",
+    animate: "enter",
+    exit: "exit",
+
+    transition: { type: "tween", duration: 0.5 },
+  };
+
+  const noResults = searchResults.length === 0;
+
   useEffect(() => {
-    const fn = (e: any) => {
-      if (inputRef.current) {
-        if (e.shiftKey && e.key.toLowerCase() === "f") {
-          inputRef.current.focus();
-        }
-      }
+    const checkKeyState = (e: any, value: boolean) => {
+      if (e.key.toLowerCase() === "f") setFPressed(value);
+      if (e.key.toLowerCase() === "shift") setShiftHeld(value);
     };
 
-    const d = window.addEventListener("keyup", fn);
+    const onKeyDown = (e: any) => checkKeyState(e, true);
+    const onKeyUp = (e: any) => checkKeyState(e, false);
 
-    return () => window.removeEventListener("keyup", fn);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+    };
   }, []);
 
   useEffect(() => {
-    if (searchTerm === "") setSearchResults([]);
-    else {
+    if (inputRef.current) {
+      if (fPressed && shiftHeld) {
+        inputRef.current.focus();
+      }
+    }
+  }, [fPressed, shiftHeld]);
+
+  useEffect(() => {
+    // if (searchTerm === "") setSearchResults([]);
+    if (searchTerm !== "") {
       const sr = fuse.search(searchTerm);
       const newResults = sr.map(({ item }) => item);
 
@@ -218,8 +285,8 @@ const Searchbar = ({
         />
         {!searchTerm && !isFocused && (
           <Placeholder>
-            <Key>SHIFT</Key>
-            <Key>F</Key>
+            <Key style={getStyle(shiftHeld)}>SHIFT</Key>
+            <Key style={getStyle(fPressed)}>F</Key>
           </Placeholder>
         )}
         <Button
@@ -235,26 +302,30 @@ const Searchbar = ({
         </Button>
       </SearchbarContainer>
 
-      {searchResults.length !== 0 && (
-        <Results>
-          <>
-            {/* <div style={{ height: "20rem" }}>dlskfjs</div> */}
+      <AnimatePresence>
+        {searchTerm !== "" && (
+          <Results {...resultAnimProps}>
+            {noResults && <NoResult>No results.</NoResult>}
             {searchResults.map((poi) => (
-              <Item
+              <ItemPreview
                 key={poi.id}
+                poi={poi}
+                controls={controls}
                 onClick={() => {
                   openSidebar();
 
-                  // wait a bit here
-                  panToElement(poi.id, { duration: 0.5 });
+                  // we need to wait a little bit
+                  setTimeout(
+                    () => panToElement(poi.id, { duration: 0.5 }),
+
+                    showSidebar ? 0 : 500
+                  );
                 }}
-              >
-                {poi.id}
-              </Item>
+              ></ItemPreview>
             ))}
-          </>
-        </Results>
-      )}
+          </Results>
+        )}
+      </AnimatePresence>
     </Container>
   );
 };
