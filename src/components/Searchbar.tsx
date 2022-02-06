@@ -285,7 +285,7 @@ const Searchbar = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        {!searchTerm && !isFocused && (
+        {!searchTerm && (
           <Placeholder>
             <Key style={getStyle(shiftHeld)}>SHIFT</Key>
             <Key style={getStyle(fPressed)}>F</Key>

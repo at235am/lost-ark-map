@@ -31,6 +31,8 @@ const Container = styled(motion.div)`
   flex-shrink: 0;
 
   /* overflow: hidden; */
+
+  /* overflow: hidden; */
   box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 8px;
 
   background-color: ${({ theme }) => theme.colors.background.main};
@@ -40,11 +42,84 @@ const Container = styled(motion.div)`
 `;
 
 const ImageContainer = styled.div`
-  /* border: 1px dashed red; */
+  z-index: 1;
 
+  position: relative;
   height: 30%;
 
+  flex-shrink: 0;
+
   overflow: hidden;
+`;
+
+const ContentContainer = styled.div`
+  z-index: 2;
+
+  position: relative;
+
+  background-color: ${({ theme }) => theme.colors.surface.main};
+
+  height: 100%;
+
+  padding: 1rem;
+  padding-top: 0;
+`;
+
+const borderRadius = 3;
+const lowerHeight = borderRadius;
+const upperWidth = borderRadius * 2;
+const upperHeight = borderRadius * 4;
+const totalHeight = lowerHeight + upperHeight;
+
+const Curve = styled.div`
+  /* border: 1px solid red; */
+
+  position: absolute;
+  /* top: -${totalHeight}rem; */
+  bottom: 0;
+
+  height: ${totalHeight}rem;
+  width: 100%;
+
+  pointer-events: none;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  &::before {
+    z-index: 2;
+
+    /* border: 1px solid yellow; */
+
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    content: "";
+
+    height: ${upperHeight}rem;
+    width: ${upperWidth}rem;
+
+    border-bottom-left-radius: ${borderRadius}rem;
+
+    background-color: transparent;
+    box-shadow: 0 ${borderRadius}rem 0 0
+      ${({ theme }) => theme.colors.surface.main};
+    /* box-shadow: 0 5rem 0 0 red; */
+  }
+
+  &::after {
+    z-index: 1;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    /* border: 1px solid green; */
+    content: "";
+
+    width: 100%;
+    height: ${lowerHeight}rem;
+    border-top-right-radius: ${borderRadius}rem;
+
+    background-color: ${({ theme }) => theme.colors.surface.main};
+  }
 `;
 
 const Img = styled(motion.img)`
@@ -55,6 +130,15 @@ const Img = styled(motion.img)`
   pointer-events: none;
   touch-action: none;
   /* display: block; */
+`;
+
+const Header = styled.h1`
+  position: relative;
+  top: -2rem;
+
+  padding: 0 1rem;
+  font-weight: 700;
+  font-size: 2.5rem;
 `;
 
 type MapSidebarProps = {
@@ -189,7 +273,7 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
       animate(imgX, [0, maxOffset], {
         repeat: Infinity,
         repeatType: "reverse",
-        duration: 5,
+        duration: 10,
       });
     }
   }, [imgDims.width]);
@@ -198,7 +282,11 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     <Container ref={sidebarRef} {...sidebarAnimProps}>
       <ImageContainer>
         <Img ref={imgRef} style={{ x: imgX }} src={LOScreenshot} />
+        <Curve></Curve>
       </ImageContainer>
+      <ContentContainer>
+        <Header>Header</Header>
+      </ContentContainer>
     </Container>
   );
 };
