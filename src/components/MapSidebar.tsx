@@ -20,6 +20,7 @@ import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import useResizeObserver from "use-resize-observer";
 import { Poi } from "./PointOfInterest";
 import { loadImage } from "../utils/utils";
+import Curve from "./Curve";
 
 const Container = styled(motion.div)`
   /* border: 1px solid red; */
@@ -63,63 +64,6 @@ const ContentContainer = styled.div`
 
   padding: 1rem;
   padding-top: 0;
-`;
-
-const borderRadius = 3;
-const lowerHeight = borderRadius;
-const upperWidth = borderRadius * 2;
-const upperHeight = borderRadius * 4;
-const totalHeight = lowerHeight + upperHeight;
-
-const Curve = styled.div`
-  /* border: 1px solid red; */
-
-  position: absolute;
-  /* top: -${totalHeight}rem; */
-  bottom: 0;
-
-  height: ${totalHeight}rem;
-  width: 100%;
-
-  pointer-events: none;
-  overflow: hidden;
-
-  display: flex;
-  flex-direction: column;
-
-  &::before {
-    z-index: 2;
-
-    /* border: 1px solid yellow; */
-
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
-    content: "";
-
-    height: ${upperHeight}rem;
-    width: ${upperWidth}rem;
-
-    border-bottom-left-radius: ${borderRadius}rem;
-
-    background-color: transparent;
-    box-shadow: 0 ${borderRadius}rem 0 0
-      ${({ theme }) => theme.colors.surface.main};
-    /* box-shadow: 0 5rem 0 0 red; */
-  }
-
-  &::after {
-    z-index: 1;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
-    /* border: 1px solid green; */
-    content: "";
-
-    width: 100%;
-    height: ${lowerHeight}rem;
-    border-top-right-radius: ${borderRadius}rem;
-
-    background-color: ${({ theme }) => theme.colors.surface.main};
-  }
 `;
 
 const Img = styled(motion.img)`
@@ -282,7 +226,7 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     <Container ref={sidebarRef} {...sidebarAnimProps}>
       <ImageContainer>
         <Img ref={imgRef} style={{ x: imgX }} src={LOScreenshot} />
-        <Curve></Curve>
+        <Curve borderRadius={3}></Curve>
       </ImageContainer>
       <ContentContainer>
         <Header>Header</Header>

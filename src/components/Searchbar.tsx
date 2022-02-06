@@ -21,6 +21,7 @@ import {
   MdClose,
   MdMenu,
   MdBackHand,
+  MdMenuOpen,
 } from "react-icons/md";
 import ItemPreview from "./ItemPreview";
 
@@ -275,7 +276,7 @@ const Searchbar = ({
         onAnimationComplete={() => setShortcutRegistered(false)}
       >
         <Button type="button" onClick={toggleSidebar} {...buttonAnimation}>
-          {showSidebar ? <MdArrowBack /> : <MdMenu />}
+          {showSidebar ? <MdArrowBack /> : <MdMenuOpen />}
         </Button>
         <Input
           ref={inputRef}
