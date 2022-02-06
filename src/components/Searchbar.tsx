@@ -218,15 +218,10 @@ const Searchbar = ({
           zIndex: 2,
         },
       },
-      exit: {
-        opacity: 0,
-        y: -500,
-        zIndex: 0,
-      },
     },
     initial: "initial",
     animate: "enter",
-    exit: "exit",
+    exit: "initial",
 
     transition: { type: "tween", duration: 0.5 },
   };
@@ -260,7 +255,6 @@ const Searchbar = ({
   }, [fPressed, shiftHeld]);
 
   useEffect(() => {
-    // if (searchTerm === "") setSearchResults([]);
     if (searchTerm !== "") {
       const sr = fuse.search(searchTerm);
       const newResults = sr.map(({ item }) => item);
@@ -273,7 +267,8 @@ const Searchbar = ({
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <SearchbarContainer
         animate={{
-          scale: isFocused ? [1, 1.1, 1, 1.1, 1] : [1, 1, 1, 1, 1],
+          scale: isFocused ? [1, 1.1, 1] : [1, 1, 1],
+          transition: { type: "tween", duration: 0.5 },
         }}
       >
         <Button type="button" onClick={toggleSidebar} {...buttonAnimation}>
