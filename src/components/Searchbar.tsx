@@ -24,7 +24,7 @@ import {
 } from "react-icons/md";
 import ItemPreview from "./ItemPreview";
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   /* border: 1px solid red; */
 
   z-index: 100;
@@ -270,8 +270,12 @@ const Searchbar = ({
   }, [searchTerm, pois]);
 
   return (
-    <Container>
-      <SearchbarContainer animate={{ opacity: isDragging ? 0.6 : 1 }}>
+    <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
+      <SearchbarContainer
+        animate={{
+          scale: isFocused ? [1, 1.1, 1, 1.1, 1] : [1, 1, 1, 1, 1],
+        }}
+      >
         <Button type="button" onClick={toggleSidebar} {...buttonAnimation}>
           {showSidebar ? <MdArrowBack /> : <MdMenu />}
         </Button>
