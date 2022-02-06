@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controls } from "./Map2";
 
 /// icons:
-import { MdAdd, MdRemove } from "react-icons/md";
+import { MdAdd, MdRemove, MdOutlineLens } from "react-icons/md";
 import { GrPowerReset } from "react-icons/gr";
 
 const Container = styled(motion.div)`
@@ -58,9 +58,9 @@ const ZoomButton = styled(motion.button)`
   min-width: 2rem;
   min-height: 2rem;
 
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 
   svg {
     width: 18px;
@@ -85,13 +85,13 @@ const MapControls = ({ controls, isDragging }: MapControlsProps) => {
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <ZoomContainer>
         <ZoomButton type="button" onClick={zoomIn}>
-          <MdAdd />
+          <MdAdd shapeRendering="crispEdges" />
         </ZoomButton>
         <ZoomButton type="button" onClick={zoomOut}>
-          <MdRemove />
+          <MdRemove shapeRendering="crispEdges" />
         </ZoomButton>
         <ZoomButton type="button" onClick={resetMap}>
-          <GrPowerReset />
+          <MdOutlineLens />
         </ZoomButton>
       </ZoomContainer>
     </Container>

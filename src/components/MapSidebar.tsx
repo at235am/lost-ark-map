@@ -35,6 +35,7 @@ const Container = styled(motion.div)`
 
   /* overflow: hidden; */
   box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 8px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 
   background-color: ${({ theme }) => theme.colors.background.main};
 

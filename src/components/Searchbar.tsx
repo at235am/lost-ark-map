@@ -276,7 +276,11 @@ const Searchbar = ({
         onAnimationComplete={() => setShortcutRegistered(false)}
       >
         <Button type="button" onClick={toggleSidebar} {...buttonAnimation}>
-          {showSidebar ? <MdArrowBack /> : <MdMenuOpen />}
+          {showSidebar ? (
+            <MdArrowBack />
+          ) : (
+            <MdMenuOpen style={{ transform: "scaleX(-1)" }} />
+          )}
         </Button>
         <Input
           ref={inputRef}
