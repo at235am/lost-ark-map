@@ -188,6 +188,7 @@ const Searchbar = ({
 
   const [shiftHeld, setShiftHeld] = useState(false);
   const [fPressed, setFPressed] = useState(false);
+  const [shortcutRegistered, setShortcutRegistered] = useState(false);
 
   const [searchResults, setSearchResults] = useState<Poi[]>([]);
 
@@ -250,6 +251,7 @@ const Searchbar = ({
     if (inputRef.current) {
       if (fPressed && shiftHeld) {
         inputRef.current.focus();
+        setShortcutRegistered(true);
       }
     }
   }, [fPressed, shiftHeld]);
@@ -267,9 +269,10 @@ const Searchbar = ({
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <SearchbarContainer
         animate={{
-          scale: isFocused ? [1, 1.1, 1] : [1, 1, 1],
+          scale: shortcutRegistered ? [1, 1.1, 1] : [1, 1, 1],
           transition: { type: "tween", duration: 0.5 },
         }}
+        onAnimationComplete={() => setShortcutRegistered(false)}
       >
         <Button type="button" onClick={toggleSidebar} {...buttonAnimation}>
           {showSidebar ? <MdArrowBack /> : <MdMenu />}
@@ -316,7 +319,6 @@ const Searchbar = ({
                   // we need to wait a little bit
                   setTimeout(
                     () => panToElement(poi.id, { duration: 0.5 }),
-
                     showSidebar ? 0 : 500
                   );
                 }}
