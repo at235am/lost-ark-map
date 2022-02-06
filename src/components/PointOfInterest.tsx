@@ -13,7 +13,7 @@ const Container = styled(motion.div)`
   top: 0;
   left: 0;
 
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.surface.main};
 
   cursor: pointer;
 
@@ -46,16 +46,15 @@ const PointOfInterest = ({ id, data, test, onClick, scale = 1 }: PoiProps) => {
       id={id}
       animate={{ x: data.position.x, y: data.position.y, scale: 1 }}
       transition={{ type: "tween", duration: 0 }}
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (onClick) onClick();
+      }}
     >
       {/* {JSON.stringify(data)} */}
       <div>{data.id}</div>
-      <div>
-        ({Math.round(data.position.x)}, {Math.round(data.position.y)})
-      </div>
-      <div>
-        ({Math.round(test.position.x)}, {Math.round(test.position.y)})
-      </div>
     </Container>
   );
 };

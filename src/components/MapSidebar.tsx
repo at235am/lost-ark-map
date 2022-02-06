@@ -11,17 +11,17 @@ import { useUIState } from "../contexts/UIContext";
 import { Controls } from "./Map2";
 
 const Container = styled(motion.div)`
+  /* border: 1px solid red; */
+
   /* MapSidebar needs to be higher than the Viewbox of the Map componeent so that we can cast shadows */
   z-index: 1;
-
-  /* border: 1px solid red; */
 
   /* tells the parent flex container to NOT shrink this at all no matter what */
   flex-shrink: 0;
 
-  box-shadow: black 0px 3px 8px;
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 8px;
 
-  background-color: #222;
+  background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
 const Item = styled.div`
@@ -109,14 +109,14 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
   };
 
   // CANT DEPEND ON WINDOW DIMENSION, CHANGE IT TO DEPEND ON THE CONTAINER
-  const sidebarWidth = isMobile ? window.innerWidth : 14 * 25;
+  const sidebarWidth = isMobile ? window.innerWidth : 14 * 30;
   const sidebarHeight = window.innerHeight * 0.4;
 
   const desktopSidebarAnimProps = {
     variants: {
       initial: {
         width: 0,
-        opacity: 1,
+        opacity: 0,
       },
       enter: {
         width: sidebarWidth,
@@ -139,7 +139,7 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
         height: 0,
         // y: sidebarHeight,
 
-        opacity: 1,
+        opacity: 0,
       },
       enter: {
         width: sidebarWidth,
@@ -152,7 +152,6 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
         width: sidebarWidth,
         height: 0,
         // y: sidebarHeight,
-
         // x: -sidebarWidth,
         opacity: 0,
       },

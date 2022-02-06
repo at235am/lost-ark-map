@@ -116,6 +116,7 @@ export type Controls = {
   zoomIn: () => void;
   zoomOut: () => void;
   resetZoom: () => void;
+  resetMap: () => void;
 };
 
 export type Position = {
@@ -156,6 +157,7 @@ const Map2 = ({
   const [debug, setDebug] = useState<any>(null);
   const [poiSelectedId, setPoiSelectedId] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const viewboxRef = useRef<HTMLDivElement>(null);
   const draggableRef = useRef<HTMLDivElement>(null);
@@ -178,8 +180,6 @@ const Map2 = ({
     () => pois.find((poi) => poi.id === poiSelectedId),
     [poiSelectedId]
   );
-
-  console.log({ poiSelectedId, poiSelected });
 
   const adjustImage = () => {
     if (draggableRef.current && viewboxRef.current) {
@@ -244,6 +244,8 @@ const Map2 = ({
         lastOffset: [ldx, ldy],
         pinching,
         cancel,
+        first,
+        active,
       }) => {
         if (pinching) {
           setDebug((v: any) => ({ ...v, onDrag: "pinching" }));
@@ -258,6 +260,18 @@ const Map2 = ({
           // console.log(debugString, state);
           // setDebug((v: any) => ({ ...v, onDrag: debugString }));
         }
+
+        if (!first) {
+          setIsDragging(true);
+        }
+        // if (active) {
+        //   setIsDragging(true);
+        // }
+      },
+      // onDragStart: () => setIsDragging(true),
+      onDragEnd: () => {
+        adjustImage();
+        setIsDragging(false);
       },
       onWheel: ({ direction: [_, dy], active }) => {
         if (active) {
@@ -345,7 +359,6 @@ const Map2 = ({
       onPinchEnd: (state) => {
         // adjustImage();
       },
-      onDragEnd: adjustImage,
     },
     {
       target: draggableRef,
@@ -500,6 +513,7 @@ const Map2 = ({
     zoomIn,
     zoomOut,
     resetZoom,
+    resetMap,
   };
 
   useEffect(() => {
@@ -522,26 +536,34 @@ const Map2 = ({
   return (
     <Container>
       {/* <Debug drag data={{ showSidebar }} /> */}
-      <Searchbar pois={pois} controls={controls} />
+      <Searchbar
+        pois={pois}
+        controls={controls}
+        showSidebar={showSidebar}
+        isDragging={isDragging}
+      />
       <AnimatePresence>
         {showSidebar && <MapSidebar controls={controls} />}
       </AnimatePresence>
       <Viewbox className="viewbow" ref={viewboxRef}>
         {showCenterGridlines && <CenterGuidelines />}
 
-        {!isMobile && (
+        {/* {!isMobile && (
           <Cursor showPosition>
             <div>{}</div>
           </Cursor>
-        )}
+        )} */}
 
         <MapControls
-          zoomIn={zoomIn}
-          zoomOut={zoomOut}
-          centerMap={() => {
-            resetMap();
-            setPoiSelectedId(null);
-          }}
+          controls={controls}
+          isDragging={isDragging}
+
+          // zoomIn={zoomIn}
+          // zoomOut={zoomOut}
+          // centerMap={() => {
+          //   resetMap();
+
+          // }}
         />
 
         <BackgroundContainer>
@@ -565,7 +587,11 @@ const Map2 = ({
               data={data}
               test={pois[i]}
               onClick={() => {
-                setPoiSelectedId(data.id);
+                console.log({ isDragging });
+                if (!isDragging) {
+                  setPoiSelectedId(data.id);
+                  openSidebar();
+                }
               }}
             />
           ))}

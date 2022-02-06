@@ -333,11 +333,11 @@ const Map = ({
         <div>{}</div>
       </Cursor>
 
-      <MapControls
+      {/* <MapControls
         zoomIn={incrementZoom}
         zoomOut={decrementZoom}
         centerMap={panToCenter}
-      />
+      /> */}
 
       {/* <Searchbar pois={transformedPois} panToElement={panToElement} /> */}
 
