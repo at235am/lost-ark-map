@@ -3,12 +3,23 @@ import { css, jsx, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 // libraries:
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  animate,
+  AnimatePresence,
+  motion,
+  useMotionValue,
+} from "framer-motion";
 import Fuse from "fuse.js";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useUIState } from "../contexts/UIContext";
 
 import { Controls } from "./Map2";
+
+// assets:
+import LOScreenshot from "../assets/ingame-screenshot.jpg";
+import useResizeObserver from "use-resize-observer";
+import { Poi } from "./PointOfInterest";
+import { loadImage } from "../utils/utils";
 
 const Container = styled(motion.div)`
   /* border: 1px solid red; */
@@ -19,43 +30,39 @@ const Container = styled(motion.div)`
   /* tells the parent flex container to NOT shrink this at all no matter what */
   flex-shrink: 0;
 
+  /* overflow: hidden; */
   box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 8px;
 
   background-color: ${({ theme }) => theme.colors.background.main};
+
+  display: flex;
+  flex-direction: column;
 `;
 
-const Item = styled.div`
-  cursor: pointer;
+const ImageContainer = styled.div`
+  /* border: 1px dashed red; */
 
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-  }
+  height: 30%;
+
+  overflow: hidden;
 `;
 
-const Marker = styled(motion.div)`
-  /* cursor: pointer; */
-  /* z-index: 1000; */
+const Img = styled(motion.img)`
+  height: 100%;
 
-  position: absolute;
-
-  width: 3rem;
-  height: 3rem;
-
-  border: 5px solid yellow;
-  border-radius: 50%;
-
-  background-color: transparent;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-  }
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  touch-action: none;
+  /* display: block; */
 `;
 
 type MapSidebarProps = {
   controls: Controls;
+  poi: Poi;
 };
 
-const MapSidebar = ({ controls }: MapSidebarProps) => {
+const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
   const {
     toggleSidebar,
     openSidebar,
@@ -68,11 +75,14 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
     resetZoom,
   } = controls;
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const imgDims = useResizeObserver({ ref: imgRef });
+  const imgX = useMotionValue(0);
 
   const { isMobile } = useUIState();
 
   const [showMarker, setShowMarker] = useState(true);
-  const [isFocused, setIsFocused] = useState(false);
 
   const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
@@ -121,6 +131,7 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
       enter: {
         width: sidebarWidth,
         opacity: 1,
+        // transition: { type: "tween", duration: 0.5, delayChildren: 2 },
       },
       exit: {
         width: 0,
@@ -131,7 +142,10 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
     animate: "enter",
     exit: "exit",
 
-    transition: { type: "tween", duration: 0.5 },
+    transition: {
+      type: "tween",
+      duration: 0.5,
+    },
   };
 
   const mobileSidebarAnimProps = {
@@ -169,44 +183,22 @@ const MapSidebar = ({ controls }: MapSidebarProps) => {
     ? mobileSidebarAnimProps
     : desktopSidebarAnimProps;
 
-  const toggleFocus = () => setIsFocused((v) => !v);
-
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    const fn = () => {
-      setShowMarker(false);
-    };
-    if (showMarker) {
-      timer = setTimeout(fn, 5000);
+    if (imgDims.width) {
+      const maxOffset = sidebarWidth - imgDims.width;
+      animate(imgX, [0, maxOffset], {
+        repeat: Infinity,
+        repeatType: "reverse",
+        duration: 5,
+      });
     }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [showMarker]);
+  }, [imgDims.width]);
 
   return (
-    <Container
-      ref={sidebarRef}
-      // onFocus={toggleFocus}
-      // onBlur={toggleFocus}
-
-      // onFocus={() => {
-      //   console.log("focus");
-      //   setIsFocused(true);
-      // }}
-      // onBlur={() => {
-      //   console.log("blur");
-
-      //   setIsFocused(false);
-      // }}
-      {...sidebarAnimProps}
-    >
-      {/* <Searchbar
-        value={searchTerm}
-        handleChange={setSearchTerm}
-       
-      /> */}
+    <Container ref={sidebarRef} {...sidebarAnimProps}>
+      <ImageContainer>
+        <Img ref={imgRef} style={{ x: imgX }} src={LOScreenshot} />
+      </ImageContainer>
     </Container>
   );
 };

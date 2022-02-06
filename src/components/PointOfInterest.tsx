@@ -28,6 +28,7 @@ export type Poi = {
   id: string;
   type: PoiTypes;
   position: { x: number; y: number };
+  imgUrls?: string[];
 };
 
 type PoiProps = {

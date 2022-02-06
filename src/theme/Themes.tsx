@@ -230,6 +230,10 @@ export const GlobalReset = () => {
           border: 0;
           outline: 0;
         }
+
+        img {
+          display: block;
+        }
       `}
     />
   );

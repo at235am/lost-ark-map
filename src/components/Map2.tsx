@@ -32,6 +32,7 @@ import { useUIState } from "../contexts/UIContext";
 // assets:
 import LostArkMap from "../assets/lost-ark-map.png";
 import Mokoko from "../assets/mokoko.gif";
+import LOScreenshot from "../assets/ingame-screenshot.jpg";
 
 const Container = styled.div`
   /* border: 1px dashed blue; */
@@ -104,9 +105,20 @@ const HidingImage = styled(motion.img)`
   touch-action: none;
 
   display: block;
-
-  image-rendering: crisp-edges;
 `;
+
+const EmptyPoi: Poi = {
+  type: "island",
+  id: "null",
+  position: { x: 0, y: 0 },
+  imgUrls: [LOScreenshot],
+};
+
+const baseTransition: Transition = {
+  type: "tween",
+  duration: 1,
+  ease: "anticipate",
+};
 
 export type Controls = {
   toggleSidebar: () => void;
@@ -136,12 +148,6 @@ type MapProps = {
   step?: number;
   defaultZoomLevel?: number;
   debounceZoomDelay?: number; // in milli-seconds (ms)
-};
-
-const baseTransition: Transition = {
-  type: "tween",
-  duration: 1,
-  ease: "anticipate",
 };
 
 const Map2 = ({
@@ -179,7 +185,7 @@ const Map2 = ({
   };
 
   const poiSelected = useMemo(
-    () => pois.find((poi) => poi.id === poiSelectedId),
+    () => pois.find((poi) => poi.id === poiSelectedId) || EmptyPoi,
     [poiSelectedId]
   );
 
@@ -547,7 +553,7 @@ const Map2 = ({
         isDragging={isDragging}
       />
       <AnimatePresence>
-        {showSidebar && <MapSidebar controls={controls} />}
+        {showSidebar && <MapSidebar poi={poiSelected} controls={controls} />}
       </AnimatePresence>
       <Viewbox className="viewbow" ref={viewboxRef}>
         {showCenterGridlines && <CenterGuidelines />}
