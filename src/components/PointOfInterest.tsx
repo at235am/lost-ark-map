@@ -16,7 +16,7 @@ const Container = styled(motion.div)`
   top: 0;
   left: 0;
 
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.surface.main};
 
   width: 10px;
   height: 10px;
@@ -54,6 +54,7 @@ export type Poi = {
   id: string;
   type: PoiTypes;
   position: { x: number; y: number };
+  imgUrls?: string[];
   // name?: string;
   // islandHearts?: number;
   // mokokoSeeds?: number;
@@ -69,39 +70,41 @@ export type Poi = {
   // givana?: boolean;
   // territorialStatus?: string;
 };
+type PoiProps = {
+  data: Poi;
+  test: Poi;
+  scale?: number;
+  onClick?: () => void;
+};
 
-type PoiProps = { data: Poi; test: Poi };
-
-const PointOfInterest = ({ data, test }: PoiProps) => {
+const PointOfInterest = ({ data, test, onClick, scale = 1 }: PoiProps) => {
   const { x, y } = data.position;
-  const [showPOI, setShowPOI] = useState(false);
-
-  const toggleShowPOI = () => setShowPOI(!showPOI);
 
   return (
     <Container
       // position={{ x, y }}
       id={data.id}
-      animate={{ x, y }}
-      transition={{ type: "tween", duration: 0.2 }}
-      onClick={toggleShowPOI}
+      animate={{ x: data.position.x, y: data.position.y, scale: 1 }}
+      transition={{ type: "tween", duration: 0 }}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (onClick) onClick();
+      }}
     >
-      {/* {JSON.stringify(data)} */}
-      {showPOI && (
-        <DynamicPortal portalId="page-container" backdrop close={toggleShowPOI}>
-          <POIContainer>
-            <POI>
-              <div>{data.id}</div>
-              <div>
-                ({Math.round(data.position.x)}, {Math.round(data.position.y)})
-              </div>
-              <div>
-                ({Math.round(test.position.x)}, {Math.round(test.position.y)})
-              </div>
-            </POI>
-          </POIContainer>
-        </DynamicPortal>
-      )}
+      {/* {JSON.stringify(data)} */}{" "}
+      <POIContainer>
+        <POI>
+          <div>{data.id}</div>
+          <div>
+            ({Math.round(data.position.x)}, {Math.round(data.position.y)})
+          </div>
+          <div>
+            ({Math.round(test.position.x)}, {Math.round(test.position.y)})
+          </div>
+        </POI>
+      </POIContainer>
     </Container>
   );
 };

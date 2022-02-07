@@ -5,15 +5,38 @@ import styled from "@emotion/styled";
 // libraries:
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Controls } from "./Map2";
 
-const Container = styled.div`
+/// icons:
+import { MdAdd, MdRemove, MdOutlineLens } from "react-icons/md";
+import { GrPowerReset } from "react-icons/gr";
+
+const Container = styled(motion.div)`
   z-index: 200;
 
+  background-color: ${({ theme }) => theme.colors.surface.main};
   position: absolute;
   bottom: 0;
   right: 0;
 
+  width: 3rem;
+
+  padding: 0.75rem 1rem;
+
+  border-radius: 5rem;
+  overflow: hidden;
+
   margin: 1rem;
+
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
+    margin: 1.5rem 0.5rem;
+  }
 `;
 
 const Overlay = styled.div`
@@ -30,31 +53,49 @@ const ZoomContainer = styled.div`
   flex-direction: column;
 `;
 
-const ZoomButton = styled.button`
-  width: 4rem;
-  height: 4rem;
-  background-color: ${({ theme }) => theme.colors.surface.main};
-  color: ${({ theme }) => theme.colors.onSurface.main};
+const ZoomButton = styled(motion.button)`
+  background-color: transparent;
+  /* background-color: red; */
+
+  border-radius: 50%;
+
+  min-width: 2rem;
+  min-height: 2rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    width: 18px;
+    height: 18px;
+
+    fill: ${({ theme }) => theme.colors.onSurface.main};
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.surface.darker};
+  }
 `;
 
 type MapControlsProps = {
-  zoomIn: () => void;
-  zoomOut: () => void;
-  centerMap: () => void;
+  controls: Controls;
+  isDragging: boolean;
 };
 
-const MapControls = ({ zoomIn, zoomOut, centerMap }: MapControlsProps) => {
+const MapControls = ({ controls, isDragging }: MapControlsProps) => {
+  const { zoomIn, zoomOut, resetMap } = controls;
   return (
-    <Container>
+    <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <ZoomContainer>
         <ZoomButton type="button" onClick={zoomIn}>
-          +
+          <MdAdd shapeRendering="crispEdges" />
         </ZoomButton>
         <ZoomButton type="button" onClick={zoomOut}>
-          -
+          <MdRemove shapeRendering="crispEdges" />
         </ZoomButton>
-        <ZoomButton type="button" onClick={centerMap}>
-          OOPS
+        <ZoomButton type="button" onClick={resetMap}>
+          <MdOutlineLens />
         </ZoomButton>
       </ZoomContainer>
     </Container>

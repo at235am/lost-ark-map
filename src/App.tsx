@@ -6,21 +6,24 @@ import styled from "@emotion/styled";
 import { Route, Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
-import { DndContext } from "@dnd-kit/core";
 
 // custom components:
 // import NavigationBar from "./components/NavigationBar";
 import Debug from "./components/Debug";
 import Map from "./components/Map";
+import Map2 from "./components/Map2";
+import { generatePois } from "./utils/utils";
 
 // pages:
 
 const AppContainer = styled.div`
-  /* border: 2px dashed lightblue; */
+  /* border: 2px dashed red; */
 
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
+
+  /* min-height: 100vh; */
 
   display: flex;
   flex-direction: column;
@@ -41,7 +44,7 @@ const NotificationContainer = styled.div`
 `;
 
 const PageContainer = styled.main`
-  /* border: 2px dashed pink; */
+  /* border: 2px dashed blue; */
 
   z-index: 1;
   position: relative;
@@ -50,10 +53,22 @@ const PageContainer = styled.main`
   /* padding-bottom: 2rem; */
   /* padding-top: 2rem; */
 
-  flex: 1;
+  height: 100%;
+
+  /* flex: 1; */
+
+  /* height: 100%; */
 
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+
+  /* align-items: center; */
+`;
+
+const A = styled.div`
+  border: 2px solid yellow;
+  min-height: 200px;
 `;
 
 const App = () => {
@@ -76,10 +91,16 @@ const App = () => {
       </Helmet>
       {/* <NavigationBar /> */}
       <NotificationContainer id="main-notification" />
+
       <PageContainer id="page-container">
-        {/* <div style={{ height: "20rem" }}>you</div> */}
-        <Map minZoomLevel={-3} maxZoomLevel={12} step={250} />
-        {/* <Map minZoomLevel={-20} maxZoomLevel={15} step={250} /> */}
+        {/* <A></A>
+        <A></A>
+        <A></A>
+        <A></A>
+        <A></A> */}
+        {/* <Map minZoomLevel={-3} maxZoomLevel={12} step={250} /> */}
+
+        <Map2 showCenterGridlines={false} step={0.1} />
 
         {/* <Switch>
       

@@ -94,7 +94,8 @@ export const lightTheme: Theme = {
     secondary: ccs({ main: "#6c63ff" }),
 
     background: ccs({ main: "#f2f2f2", dark: "#e9eef8", darker: "#f6f6f6" }),
-    surface: ccs({ main: "#ffffff", lighter: "#e6e6e7", darker: "#ffffff" }),
+    // surface: ccs({ main: "#ffffff", lighter: "#e6e6e7", darker: "#dcdcdc" }),
+    surface: ccs({ main: "#ffffff", dark: "#f3f3f3", darker: "#e6e6e7" }),
 
     onPrimary: ccs({ main: "#ffffff" }),
     onSecondary: ccs({ main: "#000000" }),
@@ -148,6 +149,7 @@ export const GlobalReset = () => {
         }
 
         html {
+          height: 100%;
           /* border: 2px dashed teal; */
 
           /* width: 100%; */
@@ -166,17 +168,20 @@ export const GlobalReset = () => {
             this rule here.
           */
 
-          /* overflow: hidden scroll !important; */
-          overflow: hidden hidden !important;
+          overflow: hidden scroll !important;
           scroll-behavior: smooth;
+
+          /* height: 100%; */
 
           background-color: ${theme.colors.background.main};
 
           /* background: ${`linear-gradient(45deg, ${theme.colors.primary.main}, ${theme.colors.primary.light})`}; */
 
           body {
+            height: 100%;
             /* border: 2px dashed salmon; */
 
+            /* min-height: 100vh; */
             /* overflow: auto; */
 
             /* overflow: hidden; */
@@ -184,6 +189,7 @@ export const GlobalReset = () => {
             /* height: 100%; */
 
             #root {
+              height: 100%;
               /* border: 2px dashed orange; */
 
               /* overflow: hidden; */
@@ -223,6 +229,10 @@ export const GlobalReset = () => {
         input {
           border: 0;
           outline: 0;
+        }
+
+        img {
+          display: block;
         }
       `}
     />
