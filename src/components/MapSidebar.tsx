@@ -23,10 +23,11 @@ import { loadImage } from "../utils/utils";
 import Curve from "./Curve";
 
 const Container = styled(motion.div)`
-  /* border: 1px solid red; */
+  /* border: 2px dashed red; */
+  position: relative;
 
   /* MapSidebar needs to be higher than the Viewbox of the Map componeent so that we can cast shadows */
-  z-index: 1;
+  z-index: 2;
 
   /* tells the parent flex container to NOT shrink this at all no matter what */
   flex-shrink: 0;
@@ -34,28 +35,83 @@ const Container = styled(motion.div)`
   /* overflow: hidden; */
 
   /* overflow: hidden; */
-  box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 8px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 
+  /* border-top-left-radius: 3rem;
+  border-top-left-radius: 3rem; */
+
   background-color: ${({ theme }) => theme.colors.background.main};
+  /* background-color: red; */
+
+  overflow-x: hidden;
+  overflow-y: visible;
 
   display: flex;
   flex-direction: column;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
+    overflow-x: visible;
+    background-color: ${({ theme }) => theme.colors.surface.main};
+    background-color: white;
+  }
 `;
 
-const ImageContainer = styled.div`
+const Lip = styled(motion.div)`
   z-index: 1;
+
+  position: absolute;
+  top: -1rem;
+
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+
+  height: 1rem;
+  width: 100%;
+
+  background-color: ${({ theme }) => theme.colors.surface.main};
+  box-shadow: rgba(100, 100, 111, 1) 0px 7px 29px 0px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &::before {
+    content: "";
+    width: 2rem;
+    height: 4px;
+    border-radius: 2rem;
+
+    background-color: ${({ theme }) => theme.colors.onSurface.main};
+  }
+`;
+const ImageContainer = styled.div`
+  /* border: 1px dashed yellow; */
+
+  z-index: 2;
+
+  background-color: ${({ theme }) => theme.colors.primary.main};
 
   position: relative;
   height: 30%;
 
   flex-shrink: 0;
 
-  overflow: hidden;
+  overflow: visible;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
+    /* border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem; */
+    background-color: ${({ theme }) => theme.colors.surface.main};
+
+    overflow: hidden;
+  }
 `;
 
 const ContentContainer = styled.div`
-  z-index: 2;
+  /* border: 2px dashed purple; */
+
+  /* border-top-right-radius: 3rem; */
+  z-index: 3;
 
   position: relative;
 
@@ -63,23 +119,30 @@ const ContentContainer = styled.div`
 
   height: 100%;
 
-  padding: 1rem;
+  /* padding: 1rem; */
   padding-top: 0;
 `;
 
 const Img = styled(motion.img)`
   height: 100%;
+  width: auto;
 
   object-fit: cover;
   user-select: none;
   pointer-events: none;
   touch-action: none;
-  /* display: block; */
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
+    height: auto;
+    width: 100%;
+    border-top-right-radius: 2rem;
+    border-top-left-radius: 2rem;
+  }
 `;
 
 const Header = styled.h1`
   position: relative;
-  top: -2rem;
+  /* top: -2rem; */
 
   padding: 0 1rem;
   font-weight: 700;
@@ -155,22 +218,22 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     variants: {
       initial: {
         width: 0,
+        height: "100%",
         opacity: 0,
+        y: 0,
       },
       enter: {
         width: sidebarWidth,
+        height: "100%",
         opacity: 1,
+        y: 0,
+
         // transition: { type: "tween", duration: 0.5, delayChildren: 2 },
-      },
-      exit: {
-        width: 0,
-        opacity: 0,
       },
     },
     initial: "initial",
     animate: "enter",
-    exit: "exit",
-
+    exit: "initial",
     transition: {
       type: "tween",
       duration: 0.5,
@@ -180,31 +243,19 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
   const mobileSidebarAnimProps = {
     variants: {
       initial: {
-        width: sidebarWidth,
+        width: "100%",
         height: 0,
-        // y: sidebarHeight,
-
         opacity: 0,
       },
       enter: {
-        width: sidebarWidth,
+        width: "100%",
         height: sidebarHeight,
-        // y: 0,
-
         opacity: 1,
-      },
-      exit: {
-        width: sidebarWidth,
-        height: 0,
-        // y: sidebarHeight,
-        // x: -sidebarWidth,
-        opacity: 0,
       },
     },
     initial: "initial",
     animate: "enter",
-    exit: "exit",
-
+    exit: "initial",
     transition: { type: "tween", duration: 0.5 },
   };
 
@@ -215,22 +266,45 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
   useEffect(() => {
     if (imgDims.width) {
       const maxOffset = sidebarWidth - imgDims.width;
-      animate(imgX, [0, maxOffset], {
-        repeat: Infinity,
-        repeatType: "reverse",
-        duration: 10,
-      });
+      // animate(imgX, [0, maxOffset], {
+      //   repeat: Infinity,
+      //   repeatType: "reverse",
+      //   duration: 10,
+      // });
     }
   }, [imgDims.width]);
 
+  const curvePropsDesktop = {
+    topBorderRadius: 3 * 14,
+    bottomBorderRadius: 3 * 14,
+  };
+  const curvePropsMobile = {
+    topBorderRadius: 2 * 14,
+    bottomBorderRadius: 2 * 14,
+  };
+
+  const curveProps = isMobile ? curvePropsMobile : curvePropsDesktop;
+
   return (
-    <Container ref={sidebarRef} {...sidebarAnimProps}>
+    <Container
+      ref={sidebarRef}
+      {...sidebarAnimProps}
+      drag={isMobile ? "y" : false}
+    >
+      <Lip className="lip"></Lip>
       <ImageContainer>
         <Img ref={imgRef} style={{ x: imgX }} src={LOScreenshot} />
-        <Curve borderRadius={3}></Curve>
+
+        <Curve bottom {...curveProps} />
       </ImageContainer>
       <ContentContainer>
         <Header>Header</Header>
+        {/* <Curve
+          top
+          topBorderRadius={3 * 14}
+          bottomBorderRadius={2 * 14}
+          // bgColor="red"
+        /> */}
       </ContentContainer>
     </Container>
   );

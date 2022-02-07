@@ -2,26 +2,41 @@
 import { css, jsx, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+type RestrictedPosition = "relative" | "absolute";
+type CurvePosition = {
+  position: RestrictedPosition;
+  bottom: number | null;
+  top: number | null;
+};
+
 type Dims = {
+  position: CurvePosition;
+  bgColor: string | undefined;
   reverse: boolean;
-  borderRadius: number;
+  topBorderRadius: number;
+  bottomBorderRadius: number;
   lowerHeight: number;
   upperWidth: number;
   upperHeight: number;
   totalHeight: number;
 };
+// position: ${({ position }) => position};
 
-/* top: -${totalHeight}rem; */
+/* top: -${totalHeight}px; */
 const Container = styled.div<Dims>`
-  /* border: 1px solid red; */
+  /* border: 1px solid blue; */
 
-  position: absolute;
-  bottom: 0;
+  ${({ position }) => css`
+    position: ${position.position};
+    top: ${position.top}px;
+    bottom: ${position.bottom}px;
+  `};
 
-  height: ${({ totalHeight }) => totalHeight}rem;
+  height: ${({ totalHeight }) => totalHeight}px;
   width: 100%;
 
   transform: ${({ reverse }) => (reverse ? "scaleX(-1)" : "scaleX(1)")};
+  background-color: tranparent;
 
   pointer-events: none;
   overflow: hidden;
@@ -30,55 +45,80 @@ const Container = styled.div<Dims>`
   flex-direction: column;
 
   &::before {
-    z-index: 2;
-
     /* border: 1px solid yellow; */
 
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
+    z-index: 2;
     content: "";
+    /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 
-    height: ${({ upperHeight }) => upperHeight}rem;
-    width: ${({ upperWidth }) => upperWidth}rem;
+    height: ${({ upperHeight }) => upperHeight}px;
+    width: ${({ upperWidth }) => upperWidth}px;
 
-    border-bottom-left-radius: ${({ borderRadius }) => borderRadius}rem;
-
+    border-bottom-left-radius: ${({ topBorderRadius }) => topBorderRadius}px;
     background-color: transparent;
-    box-shadow: 0 ${({ borderRadius }) => borderRadius}rem 0 0
-      ${({ theme }) => theme.colors.surface.main};
-    /* box-shadow: 0 5rem 0 0 red; */
+
+    box-shadow: 0 ${({ topBorderRadius }) => topBorderRadius}px 0 0
+      ${({ theme, bgColor }) => bgColor ?? theme.colors.surface.main};
+    /* box-shadow: 0 5px 0 0 red; */
   }
 
   &::after {
-    z-index: 1;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
     /* border: 1px solid green; */
+
+    z-index: 1;
     content: "";
+    box-shadow: rgba(100, 100, 111, 0.6) 0px 7px 29px 0px;
 
+    height: ${({ lowerHeight }) => lowerHeight}px;
     width: 100%;
-    height: ${({ lowerHeight }) => lowerHeight}rem;
-    border-top-right-radius: ${({ borderRadius }) => borderRadius}rem;
 
-    background-color: ${({ theme }) => theme.colors.surface.main};
+    border-top-right-radius: ${({ bottomBorderRadius }) =>
+      bottomBorderRadius}px;
+    background-color: ${({ theme, bgColor }) =>
+      bgColor ?? theme.colors.surface.main};
   }
 `;
 type CurveProps = {
-  borderRadius?: number;
+  topBorderRadius?: number;
+  bottomBorderRadius?: number;
   reverse?: boolean;
+  bgColor?: string;
+  top?: boolean;
+  bottom?: boolean;
 };
 
-const Curve = ({ borderRadius = 2, reverse = false }: CurveProps) => {
+const Curve = ({
+  // position = "relative",
+  topBorderRadius = 14,
+  bottomBorderRadius = 0,
+  reverse = false,
+  bgColor,
+  top = false,
+  bottom = false,
+}: CurveProps) => {
   // const borderRadius = 3;
-  const lowerHeight = borderRadius;
-  const upperWidth = borderRadius * 2;
-  const upperHeight = borderRadius * 4;
+  const lowerHeight = bottomBorderRadius;
+  const lowerWidth = bottomBorderRadius;
+
+  const upperWidth = topBorderRadius * 2;
+  const upperHeight = topBorderRadius * 4;
+
   const totalHeight = lowerHeight + upperHeight;
+
+  const position = {
+    position: top || bottom ? "absolute" : ("relative" as RestrictedPosition),
+    top: top && !bottom ? -totalHeight : null,
+    bottom: bottom ? 0 : null,
+  };
 
   return (
     <Container
+      className="curve"
+      bgColor={bgColor}
       reverse={reverse}
-      borderRadius={borderRadius}
+      position={position}
+      topBorderRadius={topBorderRadius}
+      bottomBorderRadius={bottomBorderRadius}
       lowerHeight={lowerHeight}
       upperWidth={upperWidth}
       upperHeight={upperHeight}

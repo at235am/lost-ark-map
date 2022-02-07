@@ -50,8 +50,9 @@ const Container = styled.div`
   }
 `;
 
-const Viewbox = styled.div`
-  /* border: 1px dashed white; */
+const Viewbox = styled.div<{ viewboxOverflow: boolean }>`
+  /* border: 1px dashed red; */
+  z-index: 1;
 
   position: relative;
   overflow: hidden;
@@ -142,6 +143,7 @@ type MapProps = {
   // mapImage: string;
   // pois: Poi[];
   showCenterGridlines?: boolean;
+  viewboxOverflow?: boolean;
 
   minZoomLevel?: number;
   maxZoomLevel?: number;
@@ -151,6 +153,7 @@ type MapProps = {
 };
 
 const Map2 = ({
+  viewboxOverflow = false,
   // mapImage = "",
   // pois = [],
   showCenterGridlines = false,
@@ -555,7 +558,11 @@ const Map2 = ({
       <AnimatePresence>
         {showSidebar && <MapSidebar poi={poiSelected} controls={controls} />}
       </AnimatePresence>
-      <Viewbox className="viewbow" ref={viewboxRef}>
+      <Viewbox
+        viewboxOverflow={viewboxOverflow}
+        className="viewbow"
+        ref={viewboxRef}
+      >
         {showCenterGridlines && <CenterGuidelines />}
 
         {/* {!isMobile && (

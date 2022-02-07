@@ -110,7 +110,6 @@ const Results = styled(motion.ul)`
   background-color: ${({ theme }) => theme.colors.surface.main};
   border-radius: 1rem;
 
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 21px 28px 0px;
 
   height: fit-content;
