@@ -37,11 +37,7 @@ const Container = styled(motion.div)`
   /* overflow: hidden; */
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 
-  /* border-top-left-radius: 3rem;
-  border-top-left-radius: 3rem; */
-
   background-color: ${({ theme }) => theme.colors.background.main};
-  /* background-color: red; */
 
   overflow-x: hidden;
   overflow-y: visible;
@@ -52,7 +48,8 @@ const Container = styled(motion.div)`
   @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
     overflow-x: visible;
     background-color: ${({ theme }) => theme.colors.surface.main};
-    background-color: white;
+
+    box-shadow: rgba(100, 100, 111, 1) 0px 5px 29px 0px;
   }
 `;
 
@@ -62,14 +59,15 @@ const Lip = styled(motion.div)`
   position: absolute;
   top: -1rem;
 
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
 
   height: 1rem;
   width: 100%;
 
   background-color: ${({ theme }) => theme.colors.surface.main};
-  box-shadow: rgba(100, 100, 111, 1) 0px 7px 29px 0px;
+  /* box-shadow: rgba(100, 100, 111, 1) 0px 7px 29px 0px;
+  box-shadow: red 0px 7px 29px 0px; */
 
   display: flex;
   justify-content: center;
@@ -84,14 +82,15 @@ const Lip = styled(motion.div)`
     background-color: ${({ theme }) => theme.colors.onSurface.main};
   }
 `;
+
 const ImageContainer = styled.div`
   /* border: 1px dashed yellow; */
 
   z-index: 2;
-
-  background-color: ${({ theme }) => theme.colors.primary.main};
-
   position: relative;
+
+  /* background-color: ${({ theme }) => theme.colors.surface.main}; */
+
   height: 30%;
 
   flex-shrink: 0;
@@ -99,11 +98,9 @@ const ImageContainer = styled.div`
   overflow: visible;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
-    /* border-top-right-radius: 1rem;
-    border-top-left-radius: 1rem; */
-    background-color: ${({ theme }) => theme.colors.surface.main};
-
     overflow: hidden;
+
+    background-color: red;
   }
 `;
 
@@ -135,8 +132,8 @@ const Img = styled(motion.img)`
   @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
     height: auto;
     width: 100%;
-    border-top-right-radius: 2rem;
-    border-top-left-radius: 2rem;
+    border-top-right-radius: 1.5rem;
+    border-top-left-radius: 1.5rem;
   }
 `;
 
