@@ -161,6 +161,7 @@ type SearchbarProps = {
   controls: Controls;
   showSidebar: boolean;
   isDragging: boolean;
+  poiIdSelected: string | null;
 };
 
 const Searchbar = ({
@@ -168,6 +169,7 @@ const Searchbar = ({
   controls,
   showSidebar,
   isDragging,
+  poiIdSelected,
 }: SearchbarProps) => {
   const {
     toggleSidebar,
@@ -179,6 +181,7 @@ const Searchbar = ({
     zoomIn,
     zoomOut,
     resetZoom,
+    setPoiIdSelected,
   } = controls;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -265,6 +268,13 @@ const Searchbar = ({
     }
   }, [searchTerm, pois]);
 
+  useEffect(() => {
+    console.log("df");
+    if (poiIdSelected) {
+      // setSearchTerm()
+    }
+  }, [poiIdSelected]);
+
   return (
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <SearchbarContainer
@@ -319,6 +329,7 @@ const Searchbar = ({
                 controls={controls}
                 onClick={() => {
                   openSidebar();
+                  setPoiIdSelected(poi.id);
 
                   // we need to wait a little bit
                   setTimeout(

@@ -54,12 +54,17 @@ const Viewbox = styled.div<{ viewboxOverflow: boolean }>`
   /* border: 1px dashed red; */
   z-index: 1;
 
+  background-color: #222;
+
   position: relative;
   overflow: hidden;
 `;
 
 const DraggableMap = styled(motion.div)`
   /* border: 1px dashed green; */
+
+  background-image: ${`url(${LostArkMap})`};
+  image-rendering: pixelated;
 
   position: relative;
   touch-action: none;
@@ -68,6 +73,8 @@ const DraggableMap = styled(motion.div)`
 
   width: fit-content;
   height: fit-content;
+
+  box-shadow: inset 0px 0px 100px 115px rgba(34, 34, 34, 1);
 
   &:active {
     cursor: move;
@@ -83,7 +90,9 @@ const Img = styled(motion.img)`
 
   display: block;
 
-  image-rendering: crisp-edges;
+  opacity: 0;
+
+  /* image-rendering: crisp-edges; */
 `;
 
 const BackgroundContainer = styled.div`
@@ -132,6 +141,7 @@ export type Controls = {
   zoomOut: () => void;
   resetZoom: () => void;
   resetMap: () => void;
+  setPoiIdSelected: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export type Position = {
@@ -166,7 +176,7 @@ const Map2 = ({
 }: MapProps) => {
   const { isMobile } = useUIState();
   const [debug, setDebug] = useState<any>(null);
-  const [poiSelectedId, setPoiSelectedId] = useState<string | null>(null);
+  const [poiIdSelected, setPoiIdSelected] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -188,8 +198,8 @@ const Map2 = ({
   };
 
   const poiSelected = useMemo(
-    () => pois.find((poi) => poi.id === poiSelectedId) || EmptyPoi,
-    [poiSelectedId]
+    () => pois.find((poi) => poi.id === poiIdSelected),
+    [poiIdSelected]
   );
 
   const adjustImage = () => {
@@ -414,10 +424,9 @@ const Map2 = ({
   };
 
   const panToElement = (id: string, transition?: AnimationOptions<number>) => {
-    console.log(id);
     transition = transition ?? baseTransition;
-
     const element = pois.find((poi) => poi.id === id);
+
     if (element) {
       // console.log("-----------\npantoelement");
       if (viewboxRef.current && draggableRef.current) {
@@ -527,6 +536,7 @@ const Map2 = ({
     zoomOut,
     resetZoom,
     resetMap,
+    setPoiIdSelected,
   };
 
   useEffect(() => {
@@ -554,6 +564,7 @@ const Map2 = ({
         controls={controls}
         showSidebar={showSidebar}
         isDragging={isDragging}
+        poiIdSelected={poiIdSelected}
       />
       <AnimatePresence>
         {showSidebar && <MapSidebar poi={poiSelected} controls={controls} />}
@@ -605,7 +616,7 @@ const Map2 = ({
               test={pois[i]}
               onClick={() => {
                 if (!isDragging) {
-                  setPoiSelectedId(data.id);
+                  setPoiIdSelected(data.id);
                   openSidebar();
                 }
               }}

@@ -62,9 +62,9 @@ const ZoomButton = styled(motion.button)`
   min-width: 2rem;
   min-height: 2rem;
 
-  /* display: flex;
+  display: flex;
   justify-content: center;
-  align-items: center; */
+  align-items: center;
 
   svg {
     width: 18px;

@@ -21,6 +21,7 @@ import useResizeObserver from "use-resize-observer";
 import { Poi } from "./PointOfInterest";
 import { loadImage } from "../utils/utils";
 import Curve from "./Curve";
+import DefaultSidebarContent from "./DefaultSidebarContent";
 
 const Container = styled(motion.div)`
   /* border: 2px dashed red; */
@@ -35,7 +36,7 @@ const Container = styled(motion.div)`
   /* overflow: hidden; */
 
   /* overflow: hidden; */
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: rgba(0, 0, 0, 1) -20px 0px 30px 10px;
 
   background-color: ${({ theme }) => theme.colors.background.main};
 
@@ -99,8 +100,6 @@ const ImageContainer = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.s}px) {
     overflow: hidden;
-
-    background-color: red;
   }
 `;
 
@@ -144,11 +143,12 @@ const Header = styled.h1`
   padding: 0 1rem;
   font-weight: 700;
   font-size: 2.5rem;
+  white-space: nowrap;
 `;
 
 type MapSidebarProps = {
   controls: Controls;
-  poi: Poi;
+  poi: Poi | undefined | null;
 };
 
 const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
@@ -295,13 +295,13 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
         <Curve bottom {...curveProps} />
       </ImageContainer>
       <ContentContainer>
-        <Header>Header</Header>
-        {/* <Curve
-          top
-          topBorderRadius={3 * 14}
-          bottomBorderRadius={2 * 14}
-          // bgColor="red"
-        /> */}
+        {poi ? (
+          <>
+            <Header>{poi.id}</Header>
+          </>
+        ) : (
+          <DefaultSidebarContent />
+        )}
       </ContentContainer>
     </Container>
   );
