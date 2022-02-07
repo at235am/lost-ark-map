@@ -6,6 +6,9 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
+// components:
+import DynamicPortal from "./DynamicPortal";
+
 type Position = { x: number; y: number };
 
 const Container = styled(motion.div)`
@@ -15,6 +18,9 @@ const Container = styled(motion.div)`
 
   background-color: black;
 
+  width: 10px;
+  height: 10px;
+
   cursor: pointer;
 
   &:hover {
@@ -22,8 +28,27 @@ const Container = styled(motion.div)`
   }
 `;
 
-export type PoiTypes = "island" | "zone" | "harbor" | "landing";
-("gate"); // will be revised
+const POIContainer = styled(motion.div)`
+  position: absolute;
+
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const POI = styled(motion.div)`
+  height: 15rem;
+  width: 20rem;
+
+  border: 1px solid ${({ theme }) => theme.colors.background.main};
+  border-radius: 1px;
+  background: ${({ theme }) => theme.colors.background.darker};
+`;
+
+export type PoiTypes = "island" | "zone" | "harbor" | "landing"; // will be revised
 
 export type Poi = {
   id: string;
@@ -45,25 +70,38 @@ export type Poi = {
   // territorialStatus?: string;
 };
 
-type PoiProps = { id: string; data: Poi; test: Poi };
+type PoiProps = { data: Poi; test: Poi };
 
-const PointOfInterest = ({ id, data, test }: PoiProps) => {
+const PointOfInterest = ({ data, test }: PoiProps) => {
   const { x, y } = data.position;
+  const [showPOI, setShowPOI] = useState(false);
+
+  const toggleShowPOI = () => setShowPOI(!showPOI);
+
   return (
     <Container
       // position={{ x, y }}
-      id={id}
-      animate={{ x: data.position.x, y: data.position.y }}
+      id={data.id}
+      animate={{ x, y }}
       transition={{ type: "tween", duration: 0.2 }}
+      onClick={toggleShowPOI}
     >
       {/* {JSON.stringify(data)} */}
-      <div>{data.id}</div>
-      <div>
-        ({Math.round(data.position.x)}, {Math.round(data.position.y)})
-      </div>
-      <div>
-        ({Math.round(test.position.x)}, {Math.round(test.position.y)})
-      </div>
+      {showPOI && (
+        <DynamicPortal portalId="page-container" backdrop close={toggleShowPOI}>
+          <POIContainer>
+            <POI>
+              <div>{data.id}</div>
+              <div>
+                ({Math.round(data.position.x)}, {Math.round(data.position.y)})
+              </div>
+              <div>
+                ({Math.round(test.position.x)}, {Math.round(test.position.y)})
+              </div>
+            </POI>
+          </POIContainer>
+        </DynamicPortal>
+      )}
     </Container>
   );
 };

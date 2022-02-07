@@ -26,27 +26,16 @@ import throttle from "lodash.throttle";
 import useMousePosition from "../hooks/useMousePosition";
 import MapControls from "./MapControls";
 
-// const arg: DragControlOptions;
-
-const Viewbox = styled(motion.div)`
+const Viewbox = styled.div`
   position: relative;
 
   border: 1px dashed red;
   height: 100vh;
   width: 100vw;
 
-  /* width: 100%;
-  max-width: 100vw;
-  max-height: 100vh;
-  height: 100%;
-  min-height: 100%; */
-
-  /* flex: 1; */
-
   overflow: hidden;
 `;
 
-// const DraggableMap = styled.div`
 const DraggableMap = styled(motion.div)`
   position: relative;
 
@@ -150,9 +139,7 @@ const Map = ({
   const viewboxRef = useRef<HTMLDivElement>(null);
 
   const [pois, setPois] = useState<Poi[]>([]);
-  // const [offset, setOffset] = useState(ORIGIN);
   const offset = useRef(ORIGIN);
-
   const setOffset = (value: Position) => (offset.current = value);
 
   const dragger = useAnimation();
@@ -198,15 +185,6 @@ const Map = ({
     else incrementZoom();
   };
 
-  const viewboxPositionToMapPosition = (pos: Position) => {
-    const x = (pos.x - offset.current.x) / zoomScale;
-    const y = (pos.y - offset.current.y) / zoomScale;
-
-    return { x, y };
-  };
-
-  const mapPositionToViewboxPosition = (pos: Position) => {};
-
   const moveMapRelativeToViewbox = (
     x: number,
     y: number,
@@ -220,7 +198,7 @@ const Map = ({
    * @param from represents a position relative to the map
    * @param to represents a position relative to viewbox
    */
-  const move = (
+  const moveMapFromMapPositionToViewboxPosition = (
     from: Position,
     to: Position,
     transition = { duration: 0.2 }
@@ -242,7 +220,11 @@ const Map = ({
         y: (viewbox?.height || 0) / 2,
       };
 
-      move(element.position, center, transition);
+      moveMapFromMapPositionToViewboxPosition(
+        element.position,
+        center,
+        transition
+      );
     }
   };
 
@@ -254,8 +236,7 @@ const Map = ({
       y: (viewbox?.height || 0) / 2,
     };
 
-    console.log({ mapCenter, viewboxCenter });
-    move(mapCenter, viewboxCenter);
+    moveMapFromMapPositionToViewboxPosition(mapCenter, viewboxCenter);
   };
 
   const setCursorPosition = (
@@ -269,11 +250,6 @@ const Map = ({
     };
 
     zoomCursorPosition.current = t;
-  };
-
-  const test = () => {
-    const t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    // console.log(`(${offset.current.x}, ${offset.current.y})`);
   };
 
   useEffect(() => {
@@ -311,55 +287,28 @@ const Map = ({
   }, [zl, debounceZoomDelay]);
 
   useEffect(() => {
-    const from = {
-      x: zoomCursorPosition.current.x * zoomScale,
-      y: zoomCursorPosition.current.y * zoomScale,
+    // ZOOM WITH RESPECT TO THE MOUSE CURSOR:
+    // const from = {
+    //   x: zoomCursorPosition.current.x * zoomScale,
+    //   y: zoomCursorPosition.current.y * zoomScale,
+    // };
+    // move(from, currentCursorPosition);
+
+    // ZOOM WITH RESPECT TO THE VIEWBOX CENTER:
+    const scale = zoomScale / prevZoomScale.current;
+
+    const viewbox = viewboxRef.current?.getBoundingClientRect();
+    const viewboxCenter = {
+      x: (viewbox?.width || 0) / 2,
+      y: (viewbox?.height || 0) / 2,
     };
-    move(from, currentCursorPosition);
 
-    // const prevScale = prevZoomScale.current;
-    // const viewbox = viewboxRef.current?.getBoundingClientRect();
-    // const viewboxCenter = {
-    //   x: (viewbox?.width || 0) / 2,
-    //   y: (viewbox?.height || 0) / 2,
-    // };
+    const positionOnMap = {
+      x: (viewboxCenter.x - offset.current.x) * scale,
+      y: (viewboxCenter.y - offset.current.y) * scale,
+    };
 
-    // const positionOnMap = {
-    //   x: viewboxCenter.x * prevScale,
-    //   y: viewboxCenter.y * prevScale,
-    // };
-
-    // const pt = { x: 500, y: 500 };
-
-    // // const oldPt = { x: pt.x * prevScale, y: pt.y * prevScale };
-    // const oldPt = { x: pt.x, y: pt.y };
-    // const newPt = { x: pt.x * zoomScale, y: pt.y * zoomScale };
-
-    // const deltaS = { x: newPt.x - oldPt.x, y: newPt.y - oldPt.y };
-    // // const deltaS = { x: oldPt.x - newPt.x, y: oldPt.y - newPt.y };
-
-    // const a = offset.current.x - deltaS.x;
-    // const b = offset.current.y - deltaS.y;
-
-    // const j = pt.x * prevScale * (zoomScale - 1);
-    // const k = pt.y * prevScale * (zoomScale - 1);
-
-    // const ds = zoomScale - prevScale;
-
-    // console.log("-------------------------------------------------");
-    // console.log(`offDrag ${x.get()}, ${y.get()}`);
-    // console.log(`offset  ${offset.current.x}, ${offset.current.y}`);
-    // console.log("center", `${viewboxCenter.x}, ${viewboxCenter.y}`);
-    // console.log(`oldPt ${oldPt.x} ${oldPt.y}`);
-    // console.log(`newPt ${newPt.x} ${newPt.y}`);
-    // console.log(`delta ${deltaS.x} ${deltaS.y}`);
-    // console.log(`final ${a} ${b}`);
-    // console.log(`h ${j} ${k}`);
-    // console.log(`ds ${ds} ${ds * pt.x}`);
-
-    // moveMapRelativeToViewbox(a, b);
-
-    // move(positionOnMap, viewboxCenter);
+    moveMapFromMapPositionToViewboxPosition(positionOnMap, viewboxCenter);
   }, [zoomLevel]);
 
   const debugData = {
@@ -373,14 +322,14 @@ const Map = ({
     imageSize: { width, height },
     delta,
   };
-  // onClick={() => panToElement(poi.id, { duration: 0.5 })}
 
   return (
-    <Viewbox className="viewbow" ref={viewboxRef} onClick={test}>
+    <Viewbox className="viewbow" ref={viewboxRef}>
+      {/* <Debug drag data={debugData} /> */}
       <Cursor showPosition>
         <div>{}</div>
       </Cursor>
-      <Debug drag data={debugData} />
+
       <MapControls
         zoomIn={incrementZoom}
         zoomOut={decrementZoom}
@@ -394,7 +343,6 @@ const Map = ({
         drag
         animate={dragger}
         onDragEnd={(e, i) => {
-          console.log("hey");
           setOffset({ x: x.get(), y: y.get() });
         }}
         style={{ x, y }}
@@ -405,13 +353,8 @@ const Map = ({
         //   left: -width + window.innerWidth - 100,
         //   right: 0 + 100,
         // }}
-        // transition={{ duration: 2 }}
-        // dragTransition={{
-        // max: 0,
-        // min: -2102 * deltaX + window.innerWidth,
-        // bounceDamping: 20,
-        // }}
-        // dragElastic={1}
+
+        dragElastic={1}
       >
         <Img
           src={LostArkMap}
@@ -425,7 +368,8 @@ const Map = ({
         {transformedPois.map((data, i) => (
           <PointOfInterest
             key={data.id}
-            id={data.id}
+            // Commented out in branch POI bc already included in data
+            // id={data.id}
             data={data}
             test={pois[i]}
           />
