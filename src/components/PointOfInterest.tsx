@@ -48,7 +48,7 @@ const POI = styled(motion.div)`
   background: ${({ theme }) => theme.colors.background.darker};
 `;
 
-export type PoiTypes = "island" | "zone" | "harbor" | "landing"; // will be revised
+export type PoiTypes = "island" | "zone" | "harbor" | "landing" | "gate"; // will be revised
 
 export type Poi = {
   id: string;
