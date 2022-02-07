@@ -29,10 +29,11 @@ export type Poi = {
   id: string;
   type: PoiTypes;
   position: { x: number; y: number };
+  // name?: string;
   // islandHearts?: number;
   // mokokoSeeds?: number;
-  // recommendedGearScore: number;
-  // availability: string;
+  // recommendedGearScore?: number;
+  // availability?: string;
   // bifrost?: string;
   // localEvent?: string;
   // bossAppearance?: string;
@@ -40,7 +41,7 @@ export type Poi = {
   // craftMaterialRank?: string;
   // pvp?: string;
   // rewards?: string;
-  // givana: boolean;
+  // givana?: boolean;
   // territorialStatus?: string;
 };
 
