@@ -33,6 +33,7 @@ import { useUIState } from "../contexts/UIContext";
 import LostArkMap from "../assets/lost-ark-map.png";
 import Mokoko from "../assets/mokoko.gif";
 import LOScreenshot from "../assets/ingame-screenshot.jpg";
+import SparklingStars from "./SparklingStars";
 
 const Container = styled.div`
   /* border: 1px dashed blue; */
@@ -101,6 +102,10 @@ const BackgroundContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+
+  user-select: none;
+  pointer-events: none;
+  touch-action: none;
 
   display: flex;
   justify-content: center;
@@ -582,21 +587,13 @@ const Map2 = ({
           </Cursor>
         )} */}
 
-        <MapControls
-          controls={controls}
-          isDragging={isDragging}
-
-          // zoomIn={zoomIn}
-          // zoomOut={zoomOut}
-          // centerMap={() => {
-          //   resetMap();
-
-          // }}
-        />
+        <MapControls controls={controls} isDragging={isDragging} />
 
         <BackgroundContainer>
           <HidingImage src={Mokoko} />
         </BackgroundContainer>
+
+        <SparklingStars />
 
         <DraggableMap
           ref={draggableRef}
