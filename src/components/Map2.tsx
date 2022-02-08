@@ -187,7 +187,7 @@ const Map2 = ({
 
   const viewboxRef = useRef<HTMLDivElement>(null);
   const draggableRef = useRef<HTMLDivElement>(null);
-  // const [crop, setCrop] = useState({ x: 0, y: 0, scale: 1 });
+  const [coordinate, setCoordinate] = useState({ x: 0, y: 0 });
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -312,7 +312,10 @@ const Map2 = ({
           //   y: y.get(),
           //   scale: 1 - (dy * step) / wheelDelta,
           // });
-          animate(scale, scale.get() + step * -dy);
+          animate(scale, scale.get() + step * -dy, {
+            duration: 0.2,
+            type: "tween",
+          });
 
           // const debugString = `${dy}, ${(dy * step) / wheelDelta}`;
           // setDebug((v: any) => ({ ...v, onWheel: debugString }));
@@ -509,7 +512,7 @@ const Map2 = ({
   const zoom = (step: number) => {
     // setCrop((v) => ({ ...v, scale: v.scale + step }));
     // setCrop({ x: x.get(), y: y.get(), scale: scale.get() + step });
-    animate(scale, scale.get() + step, { duration: 0.2 });
+    animate(scale, scale.get() + step, { duration: 0.2, type: "tween" });
   };
 
   const zoomIn = () => zoom(step);
@@ -581,11 +584,7 @@ const Map2 = ({
       >
         {showCenterGridlines && <CenterGuidelines />}
 
-        {/* {!isMobile && (
-          <Cursor showPosition>
-            <div>{}</div>
-          </Cursor>
-        )} */}
+        {!isMobile && <Cursor showPosition offset={{ x, y, scale }}></Cursor>}
 
         <MapControls controls={controls} isDragging={isDragging} />
 
