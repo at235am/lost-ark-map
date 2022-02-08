@@ -9,10 +9,8 @@ import {
   motion,
   useMotionValue,
 } from "framer-motion";
-import Fuse from "fuse.js";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useUIState } from "../contexts/UIContext";
-
 import { Controls } from "./Map2";
 
 // assets:

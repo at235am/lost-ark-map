@@ -117,12 +117,12 @@ const HidingImage = styled(motion.img)`
   display: block;
 `;
 
-const EmptyPoi: Poi = {
-  type: "island",
-  id: "null",
-  position: { x: 0, y: 0 },
-  imgUrls: [LOScreenshot],
-};
+// const EmptyPoi: Poi = {
+//   type: "island",
+//   id: "null",
+//   position: { x: 0, y: 0 },
+//   imgUrls: [LOScreenshot],
+// };
 
 const baseTransition: Transition = {
   type: "tween",
