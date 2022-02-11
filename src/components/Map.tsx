@@ -329,9 +329,9 @@ const Map = ({
   return (
     <Viewbox className="viewbow" ref={viewboxRef}>
       {/* <Debug drag data={debugData} /> */}
-      <Cursor showPosition>
+      {/* <Cursor showPosition>
         <div>{}</div>
-      </Cursor>
+      </Cursor> */}
 
       {/* <MapControls
         zoomIn={incrementZoom}
@@ -375,7 +375,7 @@ const Map = ({
             key={data.id}
             id={data.id}
             data={data}
-            test={pois[i]}
+            // test={pois[i]}
           />
         ))}
       </DraggableMap>

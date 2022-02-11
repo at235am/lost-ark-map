@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 // libraries:
 import { motion, MotionValue } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Position } from "./Map2";
 
 const Container = styled(motion.div)`
   z-index: 1000;
@@ -44,6 +45,7 @@ type CursorProps = {
     scale: MotionValue<number>;
   };
   exclusive?: boolean;
+  findPositionOnMap: (position: Position) => Position;
 };
 
 const Cursor = ({
@@ -51,6 +53,7 @@ const Cursor = ({
   showPosition = false,
   offset,
   exclusive = false,
+  findPositionOnMap,
 }: CursorProps) => {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [snapshot, setSnapshot] = useState({ x: 0, y: 0 });
@@ -63,15 +66,13 @@ const Cursor = ({
       setPos({ x: e.clientX, y: e.clientY });
     };
     const fn2 = (e: any) => {
-      const x = e.clientX;
-      const y = e.clientY;
+      // the cursor relative to the viewPORT:
+      const px = e.clientX;
+      const py = e.clientY;
 
-      const ox = offset?.x.get() || 0;
-      const oy = offset?.y.get() || 0;
+      const ss = findPositionOnMap({ x: px, y: py });
 
-      console.log({ x, y, ox, oy });
-
-      setSnapshot({ x: Math.round(x - ox), y: Math.round(y - oy) });
+      setSnapshot(ss);
     };
 
     window.addEventListener("mousemove", fn);

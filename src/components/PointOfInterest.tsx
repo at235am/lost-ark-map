@@ -15,7 +15,7 @@ const Container = styled(motion.div)`
 
   background-color: ${({ theme }) => theme.colors.surface.main};
 
-  cursor: pointer;
+  /* cursor: pointer; */
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary.main};
@@ -34,12 +34,12 @@ export type Poi = {
 type PoiProps = {
   id: string;
   data: Poi;
-  test: Poi;
+  // test: Poi;
   scale?: number;
   onClick?: () => void;
 };
 
-const PointOfInterest = ({ id, data, test, onClick, scale = 1 }: PoiProps) => {
+const PointOfInterest = ({ id, data, onClick, scale = 1 }: PoiProps) => {
   const { x, y } = data.position;
   return (
     <Container
@@ -48,14 +48,17 @@ const PointOfInterest = ({ id, data, test, onClick, scale = 1 }: PoiProps) => {
       animate={{ x: data.position.x, y: data.position.y, scale: 1 }}
       transition={{ type: "tween", duration: 0 }}
       onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        // e.preventDefault();
+        // e.stopPropagation();
 
         if (onClick) onClick();
       }}
     >
       {/* {JSON.stringify(data)} */}
       <div>{data.id}</div>
+      <div>
+        {x}, {y}
+      </div>
     </Container>
   );
 };
