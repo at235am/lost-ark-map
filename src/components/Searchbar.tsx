@@ -180,9 +180,7 @@ const Searchbar = ({
     closeSidebar,
     panToCenter,
     panToElement,
-    zoom,
-    zoomIn,
-    zoomOut,
+
     resetZoom,
     setPoiIdSelected,
   } = controls;

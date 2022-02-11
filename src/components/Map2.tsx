@@ -25,7 +25,7 @@ import Searchbar from "./Searchbar";
 import CenterGuidelines from "./CenterGuidelines";
 
 // utils:
-import { generatePois } from "../utils/utils";
+import { clamp, generatePois } from "../utils/utils";
 
 // hooks:
 import { useUIState } from "../contexts/UIContext";
@@ -52,7 +52,7 @@ const Container = styled.div`
   }
 `;
 
-const Viewbox = styled.div<{ viewboxOverflow: boolean }>`
+const Viewbox = styled.div`
   /* border: 1px dashed red; */
   z-index: 1;
 
@@ -142,9 +142,7 @@ export type Controls = {
   closeSidebar: () => void;
   panToCenter: (transition?: AnimationOptions<number>) => void;
   panToElement: (id: string, transition?: AnimationOptions<number>) => void;
-  zoom: (step: number) => void;
-  zoomIn: () => void;
-  zoomOut: () => void;
+
   resetZoom: () => void;
   resetMap: () => void;
   setPoiIdSelected: React.Dispatch<React.SetStateAction<string | null>>;
@@ -161,25 +159,23 @@ type MapProps = {
   // mapImage: string;
   // pois: Poi[];
   showCenterGridlines?: boolean;
-  viewboxOverflow?: boolean;
 
-  minZoomLevel?: number;
-  maxZoomLevel?: number;
+  minZoomScale?: number;
+  maxZoomScale?: number;
   step?: number;
   defaultZoomLevel?: number;
   debounceZoomDelay?: number; // in milli-seconds (ms)
 };
 
 const Map2 = ({
-  viewboxOverflow = false,
   // mapImage = "",
   // pois = [],
   showCenterGridlines = false,
   step = 0.05,
 
   defaultZoomLevel = 0,
-  minZoomLevel = -20,
-  maxZoomLevel = 20,
+  minZoomScale = 0.5,
+  maxZoomScale = 2.5,
   debounceZoomDelay = 80,
 }: MapProps) => {
   const { isMobile } = useUIState();
@@ -208,6 +204,9 @@ const Map2 = ({
     () => pois.find((poi) => poi.id === poiIdSelected),
     [poiIdSelected]
   );
+
+  const clampScale = (scale: number) =>
+    clamp(scale, minZoomScale, maxZoomScale);
 
   const findPositionOnMap = (mousePosition: Position) => {
     // the cursor relative to the viewPORT:
@@ -265,7 +264,6 @@ const Map2 = ({
       }
 
       // bounding logic is different in the case that the image is smaller than the container:
-
       if (imageBounds.width < containerBounds.width) {
         // console.log("diff");
         if (imageBounds.left < containerBounds.left) {
@@ -297,6 +295,32 @@ const Map2 = ({
     }
   };
 
+  const adjustForSomething = (pos: Position) => {
+    const aw = draggableRef.current?.clientWidth || 32;
+    const ah = draggableRef.current?.clientHeight || 32;
+
+    const crop = { scale: scale.get() };
+
+    const m1 = (aw * (crop.scale - 1)) / 2;
+    const m2 = (ah * (crop.scale - 1)) / 2;
+
+    return {
+      x: pos.x + m1,
+      y: pos.y + m2,
+    };
+  };
+
+  const adjustForViewboxOffset = (pos: Position) => {
+    if (viewboxRef.current) {
+      const viewbox = viewboxRef.current.getBoundingClientRect();
+
+      return {
+        x: viewbox.x + pos.x,
+        y: viewbox.y + pos.y,
+      };
+    } else return pos;
+  };
+
   const zoomOnPoint = (point: Position, zoom: "zoom-in" | "zoom-out") => {
     if (viewboxRef.current) {
       const transition: AnimationOptions<number> = {
@@ -311,7 +335,7 @@ const Map2 = ({
 
       // the scaling factors:
       const prevScale = scale.get();
-      const newScale = prevScale + ds;
+      const newScale = clampScale(prevScale + ds);
       const ratio = 1 - newScale / prevScale;
 
       // the point at which the user scrolls to zoom in/out
@@ -358,32 +382,6 @@ const Map2 = ({
     x: a.x - b.x,
     y: a.y - b.y,
   });
-
-  const adjustForSomething = (pos: Position) => {
-    const aw = draggableRef.current?.clientWidth || 32;
-    const ah = draggableRef.current?.clientHeight || 32;
-
-    const crop = { scale: scale.get() };
-
-    const m1 = (aw * (crop.scale - 1)) / 2;
-    const m2 = (ah * (crop.scale - 1)) / 2;
-
-    return {
-      x: pos.x + m1,
-      y: pos.y + m2,
-    };
-  };
-
-  const adjustForViewboxOffset = (pos: Position) => {
-    if (viewboxRef.current) {
-      const viewbox = viewboxRef.current.getBoundingClientRect();
-
-      return {
-        x: viewbox.x + pos.x,
-        y: viewbox.y + pos.y,
-      };
-    } else return pos;
-  };
 
   const panToElement = (id: string, transition?: AnimationOptions<number>) => {
     transition = transition ?? baseTransition;
@@ -463,14 +461,6 @@ const Map2 = ({
     }
   };
 
-  const zoom = (step: number) => {
-    // setCrop((v) => ({ ...v, scale: v.scale + step }));
-    // setCrop({ x: x.get(), y: y.get(), scale: scale.get() + step });
-    animate(scale, scale.get() + step, { duration: 0.2, type: "tween" });
-  };
-
-  const zoomIn = () => zoomOnPoint({ x: 0, y: 0 }, "zoom-in");
-  const zoomOut = () => zoomOnPoint({ x: 0, y: 0 }, "zoom-out");
   const resetZoom = (transition = baseTransition) => {
     animate(scale, 1, transition);
   };
@@ -481,9 +471,7 @@ const Map2 = ({
     panToCenter(transition);
   };
 
-  const toggleSidebar = () => {
-    setShowSidebar((v) => !v);
-  };
+  const toggleSidebar = () => setShowSidebar((v) => !v);
   const openSidebar = () => setShowSidebar(true);
   const closeSidebar = () => setShowSidebar(false);
 
@@ -503,8 +491,6 @@ const Map2 = ({
         }
 
         if (!pinching) {
-          // setCrop((v) => ({ ...v, x: ldx + dx, y: ldy + dy }));
-          // console.log({ ldx, dx });
           setCrop({ scale: scale.get(), x: ldx + dx, y: ldy + dy });
 
           const debugString = `${dy}, ${dy * step}`;
@@ -551,9 +537,6 @@ const Map2 = ({
     closeSidebar,
     panToCenter,
     panToElement,
-    zoom,
-    zoomIn,
-    zoomOut,
     zoomInOnCenter,
     zoomOutOnCenter,
     resetZoom,
@@ -591,11 +574,7 @@ const Map2 = ({
       <AnimatePresence>
         {showSidebar && <MapSidebar poi={poiSelected} controls={controls} />}
       </AnimatePresence>
-      <Viewbox
-        viewboxOverflow={viewboxOverflow}
-        className="viewbow"
-        ref={viewboxRef}
-      >
+      <Viewbox className="viewbow" ref={viewboxRef}>
         {showCenterGridlines && <CenterGuidelines />}
 
         {!isMobile && (
@@ -603,7 +582,7 @@ const Map2 = ({
             showPosition
             offset={{ x: mx, y: my, scale }}
             findPositionOnMap={findPositionOnMap}
-          ></Cursor>
+          />
         )}
 
         <MapControls controls={controls} isDragging={isDragging} />
@@ -652,7 +631,7 @@ const Map2 = ({
               onClick={() => {
                 if (!isDragging) {
                   setPoiIdSelected(data.id);
-                  // openSidebar();
+                  openSidebar();
                 }
               }}
             />

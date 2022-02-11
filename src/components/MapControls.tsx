@@ -84,8 +84,7 @@ type MapControlsProps = {
 };
 
 const MapControls = ({ controls, isDragging }: MapControlsProps) => {
-  const { zoomIn, zoomOut, zoomInOnCenter, zoomOutOnCenter, resetMap } =
-    controls;
+  const { zoomInOnCenter, zoomOutOnCenter, resetMap } = controls;
   return (
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <ZoomContainer>

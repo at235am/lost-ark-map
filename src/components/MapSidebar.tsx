@@ -156,9 +156,6 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     closeSidebar,
     panToCenter,
     panToElement,
-    zoom,
-    zoomIn,
-    zoomOut,
     resetZoom,
   } = controls;
   const sidebarRef = useRef<HTMLDivElement>(null);
