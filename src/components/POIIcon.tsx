@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
 // types:
-import { Poi, PoiTypes } from "./POItypes";
+import { Poi, PoiTypes } from "../types/POItypes";
 
 // svgs:
 import { ReactComponent as IslandSVG } from "../assets/icons/IslandIcon.svg";

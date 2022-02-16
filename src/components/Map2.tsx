@@ -19,7 +19,7 @@ import { useGesture } from "@use-gesture/react";
 // edited in POI branch
 // import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
 import PointOfInterest from "./PointOfInterest";
-import { Poi, PoiTypes } from "./POItypes";
+import { Poi, PoiTypes } from "../types/POItypes";
 import Debug from "./Debug";
 import Cursor from "./Cursor";
 import MapControls from "./MapControls";

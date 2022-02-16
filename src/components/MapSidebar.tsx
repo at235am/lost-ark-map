@@ -18,7 +18,7 @@ import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import useResizeObserver from "use-resize-observer";
 // edited in POI branch
 // import { Poi } from "./PointOfInterest";
-import { Poi } from "./POItypes";
+import { Poi } from "../types/POItypes";
 import { loadImage } from "../utils/utils";
 import Curve from "./Curve";
 import DefaultSidebarContent from "./DefaultSidebarContent";

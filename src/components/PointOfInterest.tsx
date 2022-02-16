@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import PoiIcon from "./POIIcon";
 
 // types:
-import { Poi, PoiTypes } from "./POItypes";
+import { Poi, PoiTypes } from "../types/POItypes";
 
 type Position = { x: number; y: number };
 

@@ -10,7 +10,7 @@ import { Controls } from "./Map2";
 // edited in POI branch
 // import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
 // import { Poi } from "./PointOfInterest";
-import { Poi } from "./POItypes";
+import { Poi } from "../types/POItypes";
 
 // import rgba from "emotion-rgba";
 

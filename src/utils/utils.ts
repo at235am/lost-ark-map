@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { Position } from "../components/Map2";
 // edited in POI branch
 // import { Poi, PoiTypes } from "../components/PointOfInterest";
-import { Poi, PoiTypes } from "../components/POItypes";
+import { Poi, PoiTypes } from "../types/POItypes";
 
 export const getRandomIntInclusive = (min: number, max: number) => {
   min = Math.ceil(min);
