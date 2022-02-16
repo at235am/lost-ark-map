@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid";
 import { Position } from "../components/Map2";
-import { Poi, PoiTypes } from "../components/PointOfInterest";
+// edited in POI branch
+// import { Poi, PoiTypes } from "../components/PointOfInterest";
+import { Poi, PoiTypes } from "../components/POItypes";
 
 export const getRandomIntInclusive = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -8,10 +10,10 @@ export const getRandomIntInclusive = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 };
 
-export const generatePois = (numberOfPois: number): Poi[] => {
-  const t = [...Array(numberOfPois).keys()].map(() => ({
+export const generatePois = (numberOfPois: number) => {
+  const t: Poi[] = [...Array(numberOfPois).keys()].map(() => ({
     id: nanoid(4),
-    type: "island" as PoiTypes,
+    type: "island",
     position: {
       x: getRandomIntInclusive(0, 2100),
       y: getRandomIntInclusive(0, 1600),

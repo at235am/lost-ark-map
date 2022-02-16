@@ -7,7 +7,10 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 // components:
-import DynamicPortal from "./DynamicPortal";
+import PoiIcon from "./POIIcon";
+
+// types:
+import { Poi, PoiTypes } from "./POItypes";
 
 type Position = { x: number; y: number };
 
@@ -16,60 +19,26 @@ const Container = styled(motion.div)`
   top: 0;
   left: 0;
 
-  background-color: ${({ theme }) => theme.colors.surface.main};
+  // background-color: ${({ theme }) => theme.colors.surface.main};
 
   width: 10px;
   height: 10px;
 
-  cursor: pointer;
+  // cursor: pointer;
 
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary.main};
-  }
-`;
-
-const POIContainer = styled(motion.div)`
-  position: absolute;
-
-  height: 100%;
-  width: 100%;
+  // &:hover {
+  //   color: ${({ theme }) => theme.colors.primary.main};
+  // }
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primary.main};
+  }
 `;
 
-const POI = styled(motion.div)`
-  height: 15rem;
-  width: 20rem;
-
-  border: 1px solid ${({ theme }) => theme.colors.background.main};
-  border-radius: 1px;
-  background: ${({ theme }) => theme.colors.background.darker};
-`;
-
-export type PoiTypes = "island" | "zone" | "harbor" | "landing" | "gate"; // will be revised
-
-export type Poi = {
-  id: string;
-  type: PoiTypes;
-  position: { x: number; y: number };
-  imgUrls?: string[];
-  // name?: string;
-  // islandHearts?: number;
-  // mokokoSeeds?: number;
-  // recommendedGearScore?: number;
-  // availability?: string;
-  // bifrost?: string;
-  // localEvent?: string;
-  // bossAppearance?: string;
-  // craftingResources?: string;
-  // craftMaterialRank?: string;
-  // pvp?: string;
-  // rewards?: string;
-  // givana?: boolean;
-  // territorialStatus?: string;
-};
 type PoiProps = {
   data: Poi;
   test: Poi;
@@ -93,18 +62,7 @@ const PointOfInterest = ({ data, test, onClick, scale = 1 }: PoiProps) => {
         if (onClick) onClick();
       }}
     >
-      {/* {JSON.stringify(data)} */}{" "}
-      <POIContainer>
-        <POI>
-          <div>{data.id}</div>
-          <div>
-            ({Math.round(data.position.x)}, {Math.round(data.position.y)})
-          </div>
-          <div>
-            ({Math.round(test.position.x)}, {Math.round(test.position.y)})
-          </div>
-        </POI>
-      </POIContainer>
+      <PoiIcon type={data.type} />
     </Container>
   );
 };

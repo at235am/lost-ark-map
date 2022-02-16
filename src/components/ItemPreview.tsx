@@ -1,7 +1,10 @@
 // styling:
 import { css, jsx, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Poi } from "./PointOfInterest";
+// edited in POI branch
+// import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
+// import { Poi } from "./PointOfInterest";
+import { Poi } from "./POItypes";
 
 // icons:
 import { MdAdd, MdMap, MdSubdirectoryArrowRight } from "react-icons/md";

@@ -18,7 +18,9 @@ import { Controls } from "./Map2";
 // assets:
 import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import useResizeObserver from "use-resize-observer";
-import { Poi } from "./PointOfInterest";
+// edited in POI branch
+// import { Poi } from "./PointOfInterest";
+import { Poi } from "./POItypes";
 import { loadImage } from "../utils/utils";
 import Curve from "./Curve";
 import DefaultSidebarContent from "./DefaultSidebarContent";
