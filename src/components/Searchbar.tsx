@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 // libraries:
 import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controls } from "./Map2";
 // edited in POI branch
 // import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
@@ -27,6 +27,8 @@ import {
   MdMenuOpen,
 } from "react-icons/md";
 import ItemPreview from "./ItemPreview";
+import Debug from "./Debug";
+import { nanoid } from "nanoid";
 
 const Container = styled(motion.div)`
   /* border: 1px solid red; */
@@ -174,36 +176,42 @@ const Searchbar = ({
   isDragging,
   poiIdSelected,
 }: SearchbarProps) => {
+  const theme = useTheme();
   const {
     toggleSidebar,
     openSidebar,
     closeSidebar,
     panToCenter,
     panToElement,
-    zoom,
-    zoomIn,
-    zoomOut,
+
     resetZoom,
     setPoiIdSelected,
   } = controls;
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-  const theme = useTheme();
 
   const [shiftHeld, setShiftHeld] = useState(false);
   const [fPressed, setFPressed] = useState(false);
   const [shortcutRegistered, setShortcutRegistered] = useState(false);
 
+  // search states:
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Poi[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const fuse = useMemo(
+    () =>
+      new Fuse(pois, {
+        keys: ["id"],
+        includeScore: true,
+        shouldSort: true,
+        threshold: 0.3,
+      }),
+    [pois]
+  );
 
-  const fuse = new Fuse(pois, {
-    keys: ["id"],
-    includeScore: true,
-    shouldSort: true,
-    threshold: 0.3,
-  });
+  // derived state:
+  const noResults = searchResults.length === 0;
 
   const getStyle = (keyHeldState: boolean) => ({
     borderColor: keyHeldState ? theme.colors.primary.main : "currentColor",
@@ -232,8 +240,6 @@ const Searchbar = ({
 
     transition: { type: "tween", duration: 0.5 },
   };
-
-  const noResults = searchResults.length === 0;
 
   useEffect(() => {
     const checkKeyState = (e: any, value: boolean) => {
@@ -268,18 +274,27 @@ const Searchbar = ({
       const newResults = sr.map(({ item }) => item);
 
       setSearchResults(newResults);
-    }
+    } else setSearchResults([]);
   }, [searchTerm, pois]);
 
   useEffect(() => {
-    console.log("df");
-    if (poiIdSelected) {
-      // setSearchTerm()
+    setShowResults(searchTerm !== "");
+  }, [searchTerm]);
+
+  const determineFocusState = (node: Node | null) => {
+    if (containerRef.current) {
+      const containerStillHasFocus = containerRef.current.contains(node);
+      setShowResults(containerStillHasFocus && searchTerm !== "");
     }
-  }, [poiIdSelected]);
+  };
 
   return (
-    <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
+    <Container
+      ref={containerRef}
+      animate={{ opacity: isDragging ? 0.6 : 1 }}
+      onFocus={(e) => determineFocusState(e.target)}
+      onBlur={(e) => determineFocusState(e.relatedTarget)}
+    >
       <SearchbarContainer
         animate={{
           scale: shortcutRegistered ? [1, 1.1, 1] : [1, 1, 1],
@@ -299,8 +314,6 @@ const Searchbar = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search..."
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
         />
         {!searchTerm && (
           <Placeholder>
@@ -311,7 +324,6 @@ const Searchbar = ({
         <Button
           type="button"
           onClick={() => {
-            // toggleSidebar();
             if (searchTerm) setSearchTerm("");
             if (inputRef.current) inputRef.current.focus();
           }}
@@ -322,8 +334,13 @@ const Searchbar = ({
       </SearchbarContainer>
 
       <AnimatePresence>
-        {searchTerm !== "" && (
-          <Results {...resultAnimProps}>
+        {showResults && (
+          <Results
+            // tabIndex this container be focusable with -1 meaning users cannot tab to the element
+            // determineFocusState() depends on this being set
+            tabIndex={-1}
+            {...resultAnimProps}
+          >
             {noResults && <NoResult>No results.</NoResult>}
             {searchResults.map((poi) => (
               <ItemPreview
@@ -331,13 +348,15 @@ const Searchbar = ({
                 poi={poi}
                 controls={controls}
                 onClick={() => {
-                  openSidebar();
+                  // set new item:
                   setPoiIdSelected(poi.id);
 
-                  // we need to wait a little bit
+                  // handle UI state:
+                  openSidebar();
+                  setShowResults(false);
                   setTimeout(
                     () => panToElement(poi.id, { duration: 0.5 }),
-                    showSidebar ? 0 : 500
+                    showSidebar ? 0 : 500 // we need to wait a little bit before we pan if the sidebar is open
                   );
                 }}
               ></ItemPreview>

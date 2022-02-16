@@ -48,3 +48,6 @@ export const loadImage = (
 };
 
 export const ORIGIN: Position = { x: 0, y: 0 };
+
+export const clamp = (num: number, min: number, max: number) =>
+  Math.max(min, Math.min(num, max));

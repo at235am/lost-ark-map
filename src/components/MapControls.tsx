@@ -84,14 +84,14 @@ type MapControlsProps = {
 };
 
 const MapControls = ({ controls, isDragging }: MapControlsProps) => {
-  const { zoomIn, zoomOut, resetMap } = controls;
+  const { zoomInOnCenter, zoomOutOnCenter, resetMap } = controls;
   return (
     <Container animate={{ opacity: isDragging ? 0.6 : 1 }}>
       <ZoomContainer>
-        <ZoomButton type="button" onClick={zoomIn}>
+        <ZoomButton type="button" onClick={zoomInOnCenter}>
           <MdAdd shapeRendering="crispEdges" />
         </ZoomButton>
-        <ZoomButton type="button" onClick={zoomOut}>
+        <ZoomButton type="button" onClick={zoomOutOnCenter}>
           <MdRemove shapeRendering="crispEdges" />
         </ZoomButton>
         <ZoomButton type="button" onClick={resetMap}>

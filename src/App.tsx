@@ -100,7 +100,12 @@ const App = () => {
         <A></A> */}
         {/* <Map minZoomLevel={-3} maxZoomLevel={12} step={250} /> */}
 
-        <Map2 showCenterGridlines={false} step={0.1} />
+        <Map2
+          showCenterGridlines={false}
+          step={0.2}
+          minZoomScale={0.5}
+          maxZoomScale={2}
+        />
 
         {/* <Switch>
       

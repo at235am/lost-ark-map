@@ -41,12 +41,12 @@ const Container = styled(motion.div)`
 
 type PoiProps = {
   data: Poi;
-  test: Poi;
+  // test: Poi;
   scale?: number;
   onClick?: () => void;
 };
 
-const PointOfInterest = ({ data, test, onClick, scale = 1 }: PoiProps) => {
+const PointOfInterest = ({ data, onClick, scale = 1 }: PoiProps) => {
   const { x, y } = data.position;
 
   return (
@@ -56,8 +56,8 @@ const PointOfInterest = ({ data, test, onClick, scale = 1 }: PoiProps) => {
       animate={{ x: data.position.x, y: data.position.y, scale: 1 }}
       transition={{ type: "tween", duration: 0 }}
       onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        // e.preventDefault();
+        // e.stopPropagation();
 
         if (onClick) onClick();
       }}
