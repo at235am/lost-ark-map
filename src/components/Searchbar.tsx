@@ -7,7 +7,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controls } from "./Map2";
-import { Poi } from "./PointOfInterest";
+// edited in POI branch
+// import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
+// import { Poi } from "./PointOfInterest";
+import { Poi } from "../types/POItypes";
 
 // import rgba from "emotion-rgba";
 

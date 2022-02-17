@@ -16,7 +16,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 
 // custom components / types:
-import PointOfInterest, { Poi } from "./PointOfInterest";
+// edited in POI branch
+// import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
+import PointOfInterest from "./PointOfInterest";
+import { Poi, PoiTypes } from "../types/POItypes";
 import Debug from "./Debug";
 import Cursor from "./Cursor";
 import MapControls from "./MapControls";
@@ -608,7 +611,8 @@ const Map2 = ({
           <Img src={LostArkMap} />
           <PointOfInterest
             key={"lsdfjdf"}
-            id={"lskjdfk"}
+            // Removed Prop as exists in "data" value
+            // id={"lskjdfk"}
             data={{
               id: "lskjdfk",
               position: { x: 500, y: 500 },
@@ -626,7 +630,8 @@ const Map2 = ({
           {pois.map((data, i) => (
             <PointOfInterest
               key={data.id}
-              id={data.id}
+              // Commented out in branch POI bc already included in data
+              // id={data.id}
               data={data}
               onClick={() => {
                 if (!isDragging) {
