@@ -103,8 +103,8 @@ const App = () => {
         <Map2
           showCenterGridlines={false}
           step={0.2}
-          minZoomScale={0.5}
-          maxZoomScale={2}
+          minZoomScale={0.25}
+          maxZoomScale={1.5}
         />
 
         {/* <Switch>

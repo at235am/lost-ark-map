@@ -22,12 +22,9 @@ type POISvgProps = {
   colored: boolean;
 };
 
-const getPOISvg = (svg = IslandSVG) => styled(svg)<POISvgProps>`
+const getPOISvg = (svg = IslandSVG) => styled(svg)`
   height: 100%;
   width: 100%;
-
-  ${(props: POISvgProps) =>
-    props.colored ? `` : `fill: white; stroke: black;`}
 `;
 
 export const POI_SVG = {
@@ -52,7 +49,7 @@ type PoiIconProps = {
 const PoiIcon = ({ type, colored = true }: PoiIconProps) => {
   const Svg = getPOISvg(POI_SVG[type]);
 
-  return <Svg colored={colored} />;
+  return <Svg />;
 };
 
 export default PoiIcon;

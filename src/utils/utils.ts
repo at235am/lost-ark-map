@@ -15,8 +15,8 @@ export const generatePois = (numberOfPois: number) => {
     id: nanoid(4),
     type: "island",
     position: {
-      x: getRandomIntInclusive(0, 2100),
-      y: getRandomIntInclusive(0, 1600),
+      x: getRandomIntInclusive(0, 4865),
+      y: getRandomIntInclusive(0, 3710),
     },
   }));
 

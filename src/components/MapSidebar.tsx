@@ -230,7 +230,7 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     exit: "initial",
     transition: {
       type: "tween",
-      duration: 0.5,
+      duration: 0.25,
     },
   };
 
@@ -250,7 +250,7 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
     initial: "initial",
     animate: "enter",
     exit: "initial",
-    transition: { type: "tween", duration: 0.5 },
+    transition: { type: "tween", duration: 0.25 },
   };
 
   const sidebarAnimProps = isMobile

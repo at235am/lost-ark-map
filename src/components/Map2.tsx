@@ -16,8 +16,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 
 // custom components / types:
-// edited in POI branch
-// import PointOfInterest, { Poi, PoiTypes } from "./PointOfInterest";
 import PointOfInterest from "./PointOfInterest";
 import { Poi, PoiTypes } from "../types/POItypes";
 import Debug from "./Debug";
@@ -34,7 +32,9 @@ import { clamp, generatePois } from "../utils/utils";
 import { useUIState } from "../contexts/UIContext";
 
 // assets:
-import LostArkMap from "../assets/lost-ark-map.png";
+// import LostArkMap from "../assets/lost-ark-map.png";
+import LostArkMap from "../assets/map/map.png";
+// import LostArkMap from "../assets/map/map-with-icons.png";
 import Mokoko from "../assets/mokoko.gif";
 import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import SparklingStars from "./SparklingStars";
@@ -75,6 +75,7 @@ const DraggableMap = styled(motion.div)`
   touch-action: none;
 
   cursor: grab;
+  cursor: default;
 
   width: fit-content;
   height: fit-content;
@@ -580,13 +581,13 @@ const Map2 = ({
       <Viewbox className="viewbow" ref={viewboxRef}>
         {showCenterGridlines && <CenterGuidelines />}
 
-        {!isMobile && (
+        {/* {!isMobile && (
           <Cursor
             showPosition
             offset={{ x: mx, y: my, scale }}
             findPositionOnMap={findPositionOnMap}
           />
-        )}
+        )} */}
 
         <MapControls controls={controls} isDragging={isDragging} />
 
@@ -633,6 +634,7 @@ const Map2 = ({
               // Commented out in branch POI bc already included in data
               // id={data.id}
               data={data}
+              scale={scale}
               onClick={() => {
                 if (!isDragging) {
                   setPoiIdSelected(data.id);
