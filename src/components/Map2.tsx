@@ -610,23 +610,6 @@ const Map2 = ({
           }}
         >
           <Img src={LostArkMap} />
-          <PointOfInterest
-            key={"lsdfjdf"}
-            // Removed Prop as exists in "data" value
-            // id={"lskjdfk"}
-            data={{
-              id: "lskjdfk",
-              position: { x: 500, y: 500 },
-              type: "island",
-            }}
-            // test={pois[i]}
-            onClick={() => {
-              if (!isDragging) {
-                setPoiIdSelected("lskjdfk");
-                // openSidebar();
-              }
-            }}
-          />
 
           {pois.map((data, i) => (
             <PointOfInterest
