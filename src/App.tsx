@@ -103,7 +103,7 @@ const App = () => {
         <Map2
           showCenterGridlines={false}
           step={0.2}
-          minZoomScale={0.25}
+          minZoomScale={0.4}
           maxZoomScale={1.5}
         />
 

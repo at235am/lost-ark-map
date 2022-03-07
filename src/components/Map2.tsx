@@ -32,9 +32,10 @@ import { clamp, generatePois } from "../utils/utils";
 import { useUIState } from "../contexts/UIContext";
 
 // assets:
-// import LostArkMap from "../assets/lost-ark-map.png";
-import LostArkMap from "../assets/map/map.png";
-// import LostArkMap from "../assets/map/map-with-icons.png";
+// import LostArkMap from "../assets/map/map.png";
+// import LostArkMap from "../assets/map/edited-map-iconless-2560x1952.png";
+import LostArkMap from "../assets/map/edited-map-with-icons-2560x1952.png";
+
 import Mokoko from "../assets/mokoko.gif";
 import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import SparklingStars from "./SparklingStars";
@@ -43,6 +44,9 @@ const Container = styled.div`
   /* border: 1px dashed blue; */
 
   background-color: ${({ theme }) => theme.colors.surface.main};
+
+  width: 100%;
+  height: 100%;
 
   position: relative;
   overflow: hidden;
@@ -61,6 +65,9 @@ const Viewbox = styled.div`
 
   background-color: #222;
 
+  width: 100%;
+  height: 100%;
+
   position: relative;
   overflow: hidden;
 `;
@@ -69,7 +76,7 @@ const DraggableMap = styled(motion.div)`
   /* outline: 1px dashed green; */
 
   background-image: ${`url(${LostArkMap})`};
-  image-rendering: pixelated;
+  /* image-rendering: pixelated; */
 
   position: relative;
   touch-action: none;
@@ -176,7 +183,6 @@ const Map2 = ({
   // pois = [],
   showCenterGridlines = false,
   step = 0.05,
-
   defaultZoomLevel = 0,
   minZoomScale = 0.5,
   maxZoomScale = 2.5,
