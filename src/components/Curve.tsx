@@ -30,7 +30,7 @@ const Container = styled.div<Dims>`
     position: ${position.position};
     top: ${position.top}px;
     bottom: ${position.bottom}px;
-  `};
+  `}
 
   height: ${({ totalHeight }) => totalHeight}px;
   width: 100%;

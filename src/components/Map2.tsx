@@ -204,6 +204,18 @@ const Map2 = ({
   const [pois, setPois] = useState<Poi[]>([]);
   const [mapImageUrl, setMapImageUrl] = useState("");
 
+  /**
+   * Determines what the click of each icon does. Should be the same for every icon.
+   * Do not do things in this function that depends on any other state because
+   * the PointOfInterest component is memoized and purposely made to not rerender when it's
+   * clickAction prop is changed.
+   * @param poiId the id of the point of interest
+   */
+  const iconClickAction = (poiId: string) => {
+    setPoiIdSelected(poiId);
+    openSidebar();
+  };
+
   const setCrop = (crop: { x: number; y: number; scale: number }) => {
     mx.set(crop.x);
     my.set(crop.y);
@@ -622,14 +634,10 @@ const Map2 = ({
               key={data.id}
               // Commented out in branch POI bc already included in data
               // id={data.id}
+              selected={poiIdSelected === data.id}
               data={data}
               scale={scale}
-              onClick={() => {
-                if (!isDragging) {
-                  setPoiIdSelected(data.id);
-                  openSidebar();
-                }
-              }}
+              clickAction={iconClickAction}
             />
           ))}
         </DraggableMap>
