@@ -17,7 +17,7 @@ import { useGesture } from "@use-gesture/react";
 
 // custom components / types:
 import PointOfInterest from "./PointOfInterest";
-import { Poi, PoiTypes } from "../types/POItypes";
+import { Poi, PoiTypes } from "../types/PointOfInterestTypes";
 import Debug from "./Debug";
 import Cursor from "./Cursor";
 import MapControls from "./MapControls";

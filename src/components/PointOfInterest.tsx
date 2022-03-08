@@ -7,10 +7,10 @@ import { motion, MotionValue } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 // components:
-import PoiIcon from "./POIIcon";
+import PointOfInterestIcon from "./PointOfInterestIcon";
 
 // types:
-import { Poi, PoiTypes } from "../types/POItypes";
+import { Poi, PoiTypes } from "../types/PointOfInterestTypes";
 
 const Container = styled(motion.span)`
   position: absolute;
@@ -158,7 +158,7 @@ const PointOfInterest = ({ data, onClick, scale }: PoiProps) => {
     >
       <Background {...bgAnimProps} />
       <SizeLimiter>
-        <PoiIcon type={data.type} />
+        <PointOfInterestIcon type={data.type} />
       </SizeLimiter>
 
       <Header {...headerAnimProps}>{data.id}</Header>

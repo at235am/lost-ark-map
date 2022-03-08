@@ -18,10 +18,13 @@ import LOScreenshot from "../assets/ingame-screenshot.jpg";
 import useResizeObserver from "use-resize-observer";
 // edited in POI branch
 // import { Poi } from "./PointOfInterest";
-import { Poi } from "../types/POItypes";
+import { Poi } from "../types/PointOfInterestTypes";
 import { loadImage } from "../utils/utils";
 import Curve from "./Curve";
 import DefaultSidebarContent from "./DefaultSidebarContent";
+
+// components:
+import PointOfInterestDetails from "./PointOfInterestDetails";
 
 const Container = styled(motion.div)`
   /* border: 2px dashed red; */
@@ -294,7 +297,8 @@ const MapSidebar = ({ controls, poi }: MapSidebarProps) => {
       <ContentContainer>
         {poi ? (
           <>
-            <Header>{poi.id}</Header>
+            {/* <Header>{poi.id}</Header> */}
+            <PointOfInterestDetails poi={poi}></PointOfInterestDetails>
           </>
         ) : (
           <DefaultSidebarContent />
