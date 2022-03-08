@@ -7,10 +7,10 @@ import { motion, MotionValue } from "framer-motion";
 import { memo, useEffect, useRef, useState } from "react";
 
 // components:
-import PoiIcon from "./POIIcon";
+import PointOfInterestIcon from "./PointOfInterestIcon";
 
 // types:
-import { Poi, PoiTypes } from "../types/POItypes";
+import { Poi, PoiTypes } from "../types/PointOfInterestTypes";
 
 // icons:
 import { MdPlace } from "react-icons/md";
@@ -179,7 +179,7 @@ const PointOfInterest = ({
           <Header {...headerAnimProps}>{data.id}</Header>
           <IconBackground {...iconBgAnimProps} />
           <SizeLimiter className="size-limit-1" w={20} h={20}>
-            <PoiIcon type={data.type} />
+            <PointOfInterestIcon type={data.type} />
           </SizeLimiter>
         </>
       )}
@@ -187,7 +187,7 @@ const PointOfInterest = ({
       {selected && (
         <Marker>
           <SizeLimiter className="size-limit" w={18} h={18}>
-            <PoiIcon type={data.type} />
+            <PointOfInterestIcon type={data.type} />
           </SizeLimiter>
         </Marker>
       )}

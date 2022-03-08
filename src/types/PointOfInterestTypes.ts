@@ -69,16 +69,19 @@ export type MuddyWaters = PoiData & {
   level?: number;
   shipStability?: number;
 };
+
 export type StormWaters = PoiData & {
   type: "stormWaters";
   level?: number;
   shipStability?: number;
 };
+
 export type SirenRegion = PoiData & {
   type: "sirenRegion";
   level?: number;
   shipStability?: number;
 };
+
 export type StraitOfDead = PoiData & {
   type: "straitOfDead";
   level?: number;

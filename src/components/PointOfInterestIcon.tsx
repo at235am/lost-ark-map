@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
 // types:
-import { Poi, PoiTypes } from "../types/POItypes";
+import { Poi, PoiTypes } from "../types/PointOfInterestTypes";
 
 // svgs:
 import { ReactComponent as IslandSVG } from "../assets/icons/IslandIcon.svg";
@@ -46,10 +46,10 @@ type PoiIconProps = {
   colored?: boolean;
 };
 
-const PoiIcon = ({ type, colored = true }: PoiIconProps) => {
+const PointOfInterestIcon = ({ type, colored = true }: PoiIconProps) => {
   const Svg = getPOISvg(POI_SVG[type]);
 
   return <Svg />;
 };
 
-export default PoiIcon;
+export default PointOfInterestIcon;
