@@ -414,7 +414,7 @@ const Map2 = ({
       if (viewboxRef.current && draggableRef.current) {
         const viewbox = viewboxRef.current.getBoundingClientRect();
         const image = draggableRef.current.getBoundingClientRect();
-        const scale2 = image.width / draggableRef.current.clientWidth;
+        const scale2 = image.width / 2560;
 
         const positionOfElement = adjustForViewboxOffset({
           x: element.position.x * scale2,
@@ -427,23 +427,21 @@ const Map2 = ({
         });
 
         const diff = subtractPositions(viewboxCenter, positionOfElement);
-        const final = adjustForSomething(diff);
-
-        // setCrop((v) => ({ ...v, ...final }));
-        // setCrop({ scale: scale.get(), ...final });
-
-        // if (x.isAnimating()) x.stop();
-        // if (y.isAnimating()) y.stop();
+        // const final = adjustForSomething(diff);
+        const final = diff;
 
         animate(mx, final.x, transition);
         animate(my, final.y, transition);
 
+        // console.log("----");
         // console.log(`${image.width} ${image.height}`);
         // console.log({ imgCenter: positionOfElement });
         // console.log({ viewboxCenter });
         // console.log({ diff });
         // console.log({ final });
-        // console.log({ scale });
+        // console.log({ ratio });
+        // console.log({ scale2 });
+        // console.log({ scale: scale.get() });
       }
     }
   };
