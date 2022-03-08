@@ -410,15 +410,15 @@ const Map2 = ({
     const element = pois.find((poi) => poi.id === id);
 
     if (element) {
-      // console.log("-----------\npantoelement");
       if (viewboxRef.current && draggableRef.current) {
         const viewbox = viewboxRef.current.getBoundingClientRect();
-        const image = draggableRef.current.getBoundingClientRect();
-        const scale2 = image.width / 2560;
+        // const image = draggableRef.current.getBoundingClientRect();
+        // const scale2 = image.width / draggableRef.current.clientWidth;
+        const currentScale = scale.get();
 
         const positionOfElement = adjustForViewboxOffset({
-          x: element.position.x * scale2,
-          y: element.position.y * scale2,
+          x: element.position.x * currentScale,
+          y: element.position.y * currentScale,
         });
 
         const viewboxCenter = adjustForViewboxOffset({
@@ -434,13 +434,11 @@ const Map2 = ({
         animate(my, final.y, transition);
 
         // console.log("----");
-        // console.log(`${image.width} ${image.height}`);
         // console.log({ imgCenter: positionOfElement });
         // console.log({ viewboxCenter });
         // console.log({ diff });
         // console.log({ final });
-        // console.log({ ratio });
-        // console.log({ scale2 });
+        // console.log({ scale2: currentScale });
         // console.log({ scale: scale.get() });
       }
     }
