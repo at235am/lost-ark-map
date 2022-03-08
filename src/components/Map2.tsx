@@ -204,6 +204,18 @@ const Map2 = ({
   const [pois, setPois] = useState<Poi[]>([]);
   const [mapImageUrl, setMapImageUrl] = useState("");
 
+  /**
+   * Determines what the click of each icon does. Should be the same for every icon.
+   * Do not do things in this function that depends on any other state because
+   * the PointOfInterest component is memoized and purposely made to not rerender when it's
+   * clickAction prop is changed.
+   * @param poiId the id of the point of interest
+   */
+  const iconClickAction = (poiId: string) => {
+    setPoiIdSelected(poiId);
+    openSidebar();
+  };
+
   const setCrop = (crop: { x: number; y: number; scale: number }) => {
     mx.set(crop.x);
     my.set(crop.y);
@@ -398,15 +410,15 @@ const Map2 = ({
     const element = pois.find((poi) => poi.id === id);
 
     if (element) {
-      // console.log("-----------\npantoelement");
       if (viewboxRef.current && draggableRef.current) {
         const viewbox = viewboxRef.current.getBoundingClientRect();
-        const image = draggableRef.current.getBoundingClientRect();
-        const scale2 = image.width / draggableRef.current.clientWidth;
+        // const image = draggableRef.current.getBoundingClientRect();
+        // const scale2 = image.width / draggableRef.current.clientWidth;
+        const currentScale = scale.get();
 
         const positionOfElement = adjustForViewboxOffset({
-          x: element.position.x * scale2,
-          y: element.position.y * scale2,
+          x: element.position.x * currentScale,
+          y: element.position.y * currentScale,
         });
 
         const viewboxCenter = adjustForViewboxOffset({
@@ -415,23 +427,19 @@ const Map2 = ({
         });
 
         const diff = subtractPositions(viewboxCenter, positionOfElement);
-        const final = adjustForSomething(diff);
-
-        // setCrop((v) => ({ ...v, ...final }));
-        // setCrop({ scale: scale.get(), ...final });
-
-        // if (x.isAnimating()) x.stop();
-        // if (y.isAnimating()) y.stop();
+        // const final = adjustForSomething(diff);
+        const final = diff;
 
         animate(mx, final.x, transition);
         animate(my, final.y, transition);
 
-        // console.log(`${image.width} ${image.height}`);
+        // console.log("----");
         // console.log({ imgCenter: positionOfElement });
         // console.log({ viewboxCenter });
         // console.log({ diff });
         // console.log({ final });
-        // console.log({ scale });
+        // console.log({ scale2: currentScale });
+        // console.log({ scale: scale.get() });
       }
     }
   };
@@ -622,14 +630,10 @@ const Map2 = ({
               key={data.id}
               // Commented out in branch POI bc already included in data
               // id={data.id}
+              selected={poiIdSelected === data.id}
               data={data}
               scale={scale}
-              onClick={() => {
-                if (!isDragging) {
-                  setPoiIdSelected(data.id);
-                  openSidebar();
-                }
-              }}
+              clickAction={iconClickAction}
             />
           ))}
         </DraggableMap>
