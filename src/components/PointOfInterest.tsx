@@ -16,8 +16,11 @@ import { Poi, PoiTypes } from "../types/PointOfInterestTypes";
 import { MdPlace } from "react-icons/md";
 import isEqual from "lodash.isequal";
 import Marker from "./Marker";
+import IconWrapper from "./IconWrapper";
 
-const Container = styled(motion.span)`
+const Container = styled(motion.span)<{ selected: boolean }>`
+  z-index: ${({ selected }) => (selected ? 9999 : "auto")};
+
   position: absolute;
   top: 0;
   left: 0;
@@ -38,16 +41,8 @@ const Container = styled(motion.span)`
   }
 `;
 
-const SizeLimiter = styled.span<{ w: number; h: number }>`
-  z-index: 3;
-  position: relative;
-
-  width: ${({ w }) => w}px;
-  height: ${({ h }) => h}px;
-`;
-
 const Header = styled(motion.span)`
-  z-index: 1;
+  z-index: -1;
 
   position: absolute;
   left: 50%;
@@ -173,22 +168,18 @@ const PointOfInterest = ({
       onMouseEnter={turnOnHover}
       onMouseLeave={turnOffHover}
       onBlur={turnOffHover}
+      selected={selected}
     >
       {!selected && (
         <>
           <Header {...headerAnimProps}>{data.id}</Header>
-          <IconBackground {...iconBgAnimProps} />
-          <SizeLimiter className="size-limit-1" w={20} h={20}>
-            <PointOfInterestIcon type={data.type} />
-          </SizeLimiter>
+          <IconWrapper type={data.type} size={20} bgColor="#207afd" />
         </>
       )}
 
       {selected && (
         <Marker>
-          <SizeLimiter className="size-limit" w={18} h={18}>
-            <PointOfInterestIcon type={data.type} />
-          </SizeLimiter>
+          <IconWrapper type={data.type} size={20} />
         </Marker>
       )}
     </Container>
